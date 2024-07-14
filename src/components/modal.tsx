@@ -1,10 +1,10 @@
 'use client';
 
-import useLocale from '@/hooks/use-locale';
-import packageJson from '../../package.json';
-import { useContext } from 'react';
-import { ModalContext } from '@/providers/modal';
+import { useContext, useState } from 'react';
 import { cn } from '@/libs/tw';
+import useLocale from '@/hooks/use-locale';
+import { ModalContext } from '@/providers/modal';
+import packageJson from '../../package.json';
 
 // TODO: Dynamically import the version number
 const version = packageJson.version;
@@ -17,6 +17,12 @@ export default function Modal({ locale }: ModalProps) {
   const { t } = useLocale(locale);
   const isLocal = process.env.NODE_ENV !== 'production';
   const { isModalOpen, setModalOpen } = useContext(ModalContext);
+  const [collapseState, setCollapseState] = useState({
+    media: false,
+    playlist: false,
+    issue: false,
+    about: false,
+  });
 
   return (
     <div
@@ -24,9 +30,10 @@ export default function Modal({ locale }: ModalProps) {
       data-modal-backdrop='static'
       tabIndex={-1}
       aria-hidden='true'
+      aria-modal={isModalOpen}
       className={cn(
-        'fixed top-0 left-1/2 -translate-x-1/2 z-[60] w-full p-4 overflow-x-hidden overflow-y-auto h-[calc(100%-1rem)] max-h-full transition-all',
-        isModalOpen ? 'block' : 'hidden'
+        'fixed top-0 left-0 right-0 z-[60] w-full p-4 overflow-x-hidden overflow-y-auto md:inset-0 h-[calc(100%-1rem)] max-h-full transition-all items-center justify-center',
+        isModalOpen ? 'flex' : 'hidden'
       )}
     >
       <div className='relative w-full max-w-2xl max-h-full shadow'>
@@ -65,8 +72,14 @@ export default function Modal({ locale }: ModalProps) {
                   type='button'
                   className='flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-b-0 border-gray-200 dark:border-gray-800 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
                   data-accordion-target='#collapse-item-body-media'
-                  aria-expanded='false'
+                  aria-expanded={collapseState.media}
                   aria-controls='collapse-item-body-media'
+                  onClick={() =>
+                    setCollapseState((prev) => ({
+                      ...prev,
+                      media: !prev.media,
+                    }))
+                  }
                 >
                   <span>{t['Media Management']}</span>
                   <svg
@@ -663,8 +676,14 @@ export default function Modal({ locale }: ModalProps) {
                   type='button'
                   className='flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-b-0 border-gray-200 dark:border-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
                   data-accordion-target='#collapse-item-body-playlist'
-                  aria-expanded='false'
+                  aria-expanded={collapseState.playlist}
                   aria-controls='collapse-item-body-playlist'
+                  onClick={() =>
+                    setCollapseState((prev) => ({
+                      ...prev,
+                      playlist: !prev.playlist,
+                    }))
+                  }
                 >
                   <span>{t['Playlist Management']}</span>
                   <svg
@@ -994,8 +1013,14 @@ export default function Modal({ locale }: ModalProps) {
                   type='button'
                   className='flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-b-0 border-gray-200 dark:border-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
                   data-accordion-target='#collapse-item-body-issue'
-                  aria-expanded='false'
+                  aria-expanded={collapseState.issue}
                   aria-controls='collapse-item-body-issue'
+                  onClick={() => {
+                    setCollapseState((prevState) => ({
+                      ...prevState,
+                      issue: !prevState.issue,
+                    }));
+                  }}
                 >
                   <span>{t['Report an issue']}</span>
                   <svg
@@ -1047,8 +1072,14 @@ export default function Modal({ locale }: ModalProps) {
                   type='button'
                   className='flex items-center justify-between w-full p-5 font-medium text-left text-gray-500 border border-gray-200 dark:border-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800'
                   data-accordion-target='#collapse-item-body-about'
-                  aria-expanded='false'
+                  aria-expanded={collapseState.about}
                   aria-controls='collapse-item-body-about'
+                  onClick={() => {
+                    setCollapseState((prevState) => ({
+                      ...prevState,
+                      about: !prevState.about,
+                    }));
+                  }}
                 >
                   <span>{t['About Ambient']}</span>
                   <svg

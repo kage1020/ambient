@@ -1,5 +1,3 @@
-'use client';
-
 import DrawerPlaylist from '@/components/drawer/playlist';
 import DrawerSettings from '@/components/drawer/settings';
 import Menu from '@/components/menu';
