@@ -1,49 +1,42 @@
-# Logs
-/logs
-*.log
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
 
-# Coverage directory used by tools like istanbul
-coverage
+# testing
+/coverage
 
-# Dependency directories
-node_modules/
-jspm_packages/
-vendor/
+# next.js
+/.next/
+/out/
 
-# Output of 'npm pack'
-*.tgz
+# production
+/build
 
-# dotenv environment variables file
-.env
-
-# IDE / Editor
-.idea
-
-# macOS
+# misc
 .DS_Store
+*.pem
 
-# Vim swap files
-*.swp
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
 
 # Asset files
 assets/*.json
 !assets/PlayList.json
 !assets/lang.json
 !assets/lang-*.json
-
-# User-specific extension files
-custom.php
-
-# Others
-*.orig
-*.bak
-*.bak.*
-src/_*.*
-package-lock.json
-refuges/
