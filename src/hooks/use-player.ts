@@ -21,7 +21,7 @@ export default function usePlayer() {
   }, [mediaIndex, mediaList.length, playlistOptions.random, setMediaIndex]);
 
   const playNext = useCallback(() => {
-    if (playlistOptions.shuffle && mediaList.length > 1) {
+    if (playlistOptions.random && mediaList.length > 1) {
       while (true) {
         const randomIndex = Math.floor(Math.random() * mediaList.length);
         if (randomIndex !== mediaIndex) {
@@ -33,7 +33,7 @@ export default function usePlayer() {
     } else {
       setMediaIndex((p) => p + 1);
     }
-  }, [mediaIndex, mediaList.length, playlistOptions.shuffle, setMediaIndex]);
+  }, [mediaIndex, mediaList.length, playlistOptions.random, setMediaIndex]);
 
   return {
     playerRef,

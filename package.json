@@ -1,11 +1,11 @@
 {
-  "name": "ambient",
-  "version": "0.1.0",
+  "name": "ambient-next",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
-    "start": "next start",
+    "start": "next start -p 8765",
     "lint": "next lint"
   },
   "dependencies": {
