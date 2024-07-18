@@ -1,7 +1,7 @@
 import { headers } from 'next/headers';
 import { AcceptableLocales } from '@/libs/assets';
-import enUS from '../../public/lang-en.json';
-import jaJP from '../../public/lang-ja.json';
+import enUS from '../../public/languages/lang-en.json';
+import jaJP from '../../public/languages/lang-ja.json';
 
 export function getLocale() {
   const acceptLanguage = headers().get('accept-language');

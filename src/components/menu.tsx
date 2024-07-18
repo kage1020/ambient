@@ -1,15 +1,13 @@
 'use client';
 
-import { useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import useLocale from '@/hooks/use-locale';
 import useMediaQuery from '@/hooks/use-media-query';
-import usePlayer from '@/hooks/use-player';
-import { getOption } from '@/libs/playlist';
 import { cn } from '@/libs/tw';
-import { DrawerPlaylistContext, DrawerSettingsContext } from '@/providers/drawer';
-import { ModalContext } from '@/providers/modal';
-import { PlaylistContext, PLAYER_STATE } from '@/providers/playlist';
+import useDrawer from '@/hooks/use-drawer';
+import useModal from '@/hooks/use-modal';
+import usePlaylist from '@/hooks/use-playlist';
+import usePlayer from '@/hooks/use-player';
 
 type MenuProps = {
   locale: string;
@@ -17,26 +15,25 @@ type MenuProps = {
 
 export default function Menu({ locale }: MenuProps) {
   const { t } = useLocale(locale);
-  const { playlist, mediaIndex, playerState } = useContext(PlaylistContext);
-  const { onPlay, onPause } = usePlayer();
   const { isMd } = useMediaQuery();
   const router = useRouter();
-  const { isPlaylistOpen, setPlaylistOpen } = useContext(DrawerPlaylistContext);
-  const { isSettingsOpen, setSettingsOpen } = useContext(DrawerSettingsContext);
-  const { isModalOpen, setModalOpen } = useContext(ModalContext);
+  const { isPlaylistOpen, setPlaylistOpen, isSettingsOpen, setSettingsOpen } = useDrawer();
+  const { isModalOpen, setModalOpen } = useModal();
+  const { mediaList, mediaIndex, playlistOptions } = usePlaylist();
+  const { playing, setPlaying } = usePlayer();
 
   return (
     <div
       id='menu-container'
       className='fixed z-40 w-full h-16 max-w-lg -translate-x-1/2 bg-white border border-gray-200 rounded-full bottom-4 left-1/2 dark:bg-gray-700 dark:border-gray-600'
       style={
-        getOption('background')
+        playlistOptions.background
           ? {
-              backgroundImage: `url(${getOption('background')})`,
+              backgroundImage: `url(${playlistOptions.background})`,
               backgroundSize: 'cover',
               backgroundPosition: 'bottom',
               background:
-                'linear-gradient(to bottom, rgb(255, 255, 255 / 30%), 50%, rgb(255, 255, 255 / 100%));',
+                'linear-gradient(to bottom, rgb(255, 255, 255 / 30%), 50%, rgb(255, 255, 255 / 100%))',
             }
           : undefined
       }
@@ -113,11 +110,11 @@ export default function Menu({ locale }: MenuProps) {
             type='button'
             className={cn(
               'inline-flex items-center justify-center w-10 h-10 font-medium bg-blue-600 rounded-full hover:bg-blue-700 group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800',
-              playerState === PLAYER_STATE.PLAYING && 'hidden'
+              playing ? 'hidden' : 'inline-flex'
             )}
             data-tooltip-target='tooltip-play'
-            disabled={!playlist[mediaIndex] || playerState === PLAYER_STATE.PLAYING}
-            onClick={() => onPlay()}
+            disabled={!mediaList[mediaIndex]}
+            onClick={() => setPlaying((prev) => !prev)}
           >
             <svg
               className='w-4 h-4 text-white'
@@ -136,11 +133,11 @@ export default function Menu({ locale }: MenuProps) {
             type='button'
             className={cn(
               'items-center justify-center w-10 h-10 font-medium bg-blue-600 rounded-full hover:bg-blue-700 group focus:ring-4 focus:ring-blue-300 focus:outline-none dark:focus:ring-blue-800',
-              playerState !== PLAYER_STATE.PLAYING && 'hidden'
+              playing ? 'inline-flex' : 'hidden'
             )}
             data-tooltip-target='tooltip-pause'
-            disabled={playlist[mediaIndex] && playerState !== PLAYER_STATE.PLAYING}
-            onClick={() => onPause()}
+            disabled={!!mediaList[mediaIndex]}
+            onClick={() => setPlaying((prev) => !prev)}
           >
             <svg
               className='w-4 h-4 text-white'

@@ -1,15 +1,13 @@
 'use client';
 
-import YouTube, { YouTubeEvent } from 'react-youtube';
+import ReactPlayer from 'react-player';
 import Carousel from '@/components/carousel';
 import useLocale from '@/hooks/use-locale';
 import useMessage from '@/hooks/use-message';
-import { formatMediaCaption } from '@/libs/format';
-import { cn } from '@/libs/tw';
-import { getExtension, getOption, getYoutubeURL } from '@/libs/playlist';
 import usePlayer from '@/hooks/use-player';
-import { useContext } from 'react';
-import { PlaylistContext } from '@/providers/playlist';
+import usePlaylist from '@/hooks/use-playlist';
+import { formatMediaCaption, getYoutubeURL } from '@/libs/format';
+import { cn } from '@/libs/tw';
 
 type PlayerProps = {
   locale: string;
@@ -18,17 +16,8 @@ type PlayerProps = {
 export default function Player({ locale }: PlayerProps) {
   const { t } = useLocale(locale);
   const { showMessage } = useMessage();
-  const { playlist, mediaIndex, playerState, setPlayerState } = useContext(PlaylistContext);
-  const { youtubePlayerRef, videoPlayerRef, onPlayerReady, onPlay, onPause } = usePlayer();
-
-  const onPlayerStateChange = (e: YouTubeEvent<number>) => {
-    setPlayerState(e.data);
-  };
-
-  const onPlayerError = (e: YouTubeEvent<number>) => {
-    console.error(e);
-    showMessage('Something went wrong!', 'error', locale);
-  };
+  const { playerRef, playing, setPlaying, playNext } = usePlayer();
+  const { playlistOptions, mediaList, mediaIndex } = usePlaylist();
 
   return (
     <div className='flex flex-col items-center max-w-full w-full h-full mt-0 mx-auto mb-16 z-10 overflow-y-auto overflow-x-hidden'>
@@ -39,68 +28,53 @@ export default function Player({ locale }: PlayerProps) {
           className='text-gray-900 text-lg font-normal dark:text-white w-md flex justify-center items-center mb-2 whitespace-nowrap overflow-hidden'
         >
           <div className='animate-marquee md:animate-none'>
-            {playlist.length > 0 && formatMediaCaption(playlist[mediaIndex])}
+            {mediaList.length > 0 && formatMediaCaption(playlistOptions, mediaList[mediaIndex])}
           </div>
           <div className='animate-marquee2 md:animate-none md:hidden' aria-hidden='true'>
-            {playlist.length > 0 && formatMediaCaption(playlist[mediaIndex])}
+            {mediaList.length > 0 && formatMediaCaption(playlistOptions, mediaList[mediaIndex])}
           </div>
         </figcaption>
         <div
           id='embed-wrapper'
           className={cn(
             'flex justify-center border border-gray-300 dark:bg-gray-800 dark:text-white dark:border-gray-600 rounded-lg overflow-hidden transition-all duration-150 ease-out w-full h-0 opacity-0',
-            playlist[mediaIndex]?.videoid && 'w-max h-max opacity-100',
-            playlist[mediaIndex]?.file && 'max-w-2xl w-max h-max border-0 opacity-100'
+            mediaList[mediaIndex]?.videoid && 'w-max h-max opacity-100',
+            mediaList[mediaIndex]?.file && 'max-w-2xl w-max h-max border-0 opacity-100'
           )}
         >
-          {playlist[mediaIndex]?.videoid && (
-            <YouTube
-              ref={youtubePlayerRef}
-              videoId={playlist[mediaIndex].videoid}
-              opts={{
-                playerVars: {
-                  autoplay: getOption('autoplay') ?? 1,
-                  controls: getOption('controls') ?? 1,
-                  fs: getOption('fs') ?? 0,
-                  cc_load_policy: getOption('cc') ?? 0,
-                  rel: getOption('rel') ?? 0,
-                  start: (getOption('seek') && playlist[mediaIndex].start) ?? undefined,
-                  end: (getOption('seek') && playlist[mediaIndex].end) ?? undefined,
-                },
-              }}
-              onReady={onPlayerReady}
-              onPlay={onPlay}
-              onPause={onPause}
-              onStateChange={onPlayerStateChange}
-              onError={onPlayerError}
-            />
-          )}
-          {playlist[mediaIndex]?.file && (
-            <video
-              ref={videoPlayerRef}
-              src={playlist[mediaIndex].file}
-              controls={Boolean(getOption('controls'))}
-              controlsList='nodownload'
-              autoPlay={Boolean(getOption('autoplay'))}
-              onEnded={() => {}}
-            >
-              <source
-                src={playlist[mediaIndex].file}
-                type={`audio/${getExtension(playlist[mediaIndex].file)}`}
+          {mediaList[mediaIndex]?.file ||
+            (mediaList[mediaIndex]?.videoid && (
+              <ReactPlayer
+                ref={playerRef}
+                url={getYoutubeURL(mediaList[mediaIndex]?.videoid)}
+                playing={playing}
+                config={{
+                  youtube: {
+                    playerVars: {
+                      autoplay: 1,
+                      controls: 1,
+                      fs: 0,
+                      cc_load_policy: 0,
+                      rel: 0,
+                    },
+                  },
+                }}
+                onReady={() => setPlaying(true)}
+                onEnded={playNext}
+                onError={(e) => showMessage(e, 'error', locale)}
               />
-            </video>
-          )}
+            ))}
         </div>
         <div
           id='optional-container'
           className={cn(
-            'my-4 transition-all duration-150 ease-out opacity-0',
-            playerState >= 0 && playerState < 3 ? 'opacity-100' : 'opacity-0 hidden'
+            'my-4 transition-all duration-150 ease-out',
+            playing && mediaList[mediaIndex] ? 'opacity-100' : 'opacity-0'
           )}
         >
           <a
             id='btn-watch-origin'
-            href={getYoutubeURL(playlist[mediaIndex]?.videoid)}
+            href={getYoutubeURL(mediaList[mediaIndex]?.videoid)}
             target='_blank'
             className='text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-opacity duration-500 ease-in-out'
           >

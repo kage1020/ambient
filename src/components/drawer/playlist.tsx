@@ -3,9 +3,9 @@
 import { useContext } from 'react';
 import Image from 'next/image';
 import useLocale from '@/hooks/use-locale';
-import { getYoutubeThumbnailURL } from '@/libs/playlist';
-import { DrawerPlaylistContext } from '@/providers/drawer';
+import { getYoutubeThumbnailURL } from '@/libs/format';
 import { cn } from '@/libs/tw';
+import { DrawerPlaylistContext } from '@/providers/drawer';
 import { PlaylistContext } from '@/providers/playlist';
 
 type DrawerPlaylistProps = {
@@ -15,7 +15,7 @@ type DrawerPlaylistProps = {
 export default function DrawerPlaylist({ locale }: DrawerPlaylistProps) {
   const { t } = useLocale(locale);
   const { isPlaylistOpen, setPlaylistOpen } = useContext(DrawerPlaylistContext);
-  const { playlist, mediaIndex } = useContext(PlaylistContext);
+  const { mediaList, mediaIndex, setMediaIndex } = useContext(PlaylistContext);
 
   return (
     <div
@@ -75,18 +75,18 @@ export default function DrawerPlaylist({ locale }: DrawerPlaylistProps) {
         id='playlist-list-group'
         className='w-full mt-14 mb-16 overflow-y-auto text-sm font-normal text-gray-900 bg-white border-b border-gray-200 dark:bg-gray-700 dark:border-gray-600 dark:text-white h-[calc(100vh-136px)]'
       >
-        {playlist.length > 0 &&
-          playlist.map((media) => (
-            <a
+        {mediaList.length > 0 &&
+          mediaList.map((media, i) => (
+            <button
               key={media.mediaId}
-              href='#'
-              aria-current={playlist[mediaIndex].mediaId === media.mediaId}
+              aria-current={mediaList[mediaIndex].mediaId === media.mediaId}
               className={
-                playlist[mediaIndex].mediaId === media.mediaId
+                mediaList[mediaIndex].mediaId === media.mediaId
                   ? 'flex items-center gap-2 w-full px-4 py-2 text-white bg-blue-500 border-b border-gray-200 cursor-pointer dark:bg-gray-800 dark:border-gray-600'
                   : 'flex items-center gap-2 w-full px-4 py-2 border-b border-gray-200 cursor-pointer hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-700 focus:text-blue-700 dark:border-gray-600 dark:hover:bg-gray-600 dark:hover:text-white dark:focus:ring-gray-500 dark:focus:text-white'
               }
               data-playlist-item={media.mediaId}
+              onClick={() => setMediaIndex(i)}
             >
               <Image
                 src={getYoutubeThumbnailURL(media.videoid) || '/no-media-thumb.svg'}
@@ -95,7 +95,7 @@ export default function DrawerPlaylist({ locale }: DrawerPlaylistProps) {
                 width={32}
                 height={32}
               />
-              <div className='flex flex-col overflow-hidden'>
+              <div className='flex flex-col overflow-hidden text-left'>
                 <span className='text--playlist-title whitespace-nowrap overflow-ellipsis overflow-hidden'>
                   {media.title}
                 </span>
@@ -105,9 +105,9 @@ export default function DrawerPlaylist({ locale }: DrawerPlaylistProps) {
                   </span>
                 )}
               </div>
-            </a>
+            </button>
           ))}
-        {playlist.length === 0 && (
+        {mediaList.length === 0 && (
           <div
             id='no-media'
             className='flex w-full h-full justify-center items-center text-base text-gray-500'

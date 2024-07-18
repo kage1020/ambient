@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import local from 'next/font/local';
 import { Toaster } from 'sonner';
+import { ThemeProvider } from 'next-themes';
 import './globals.css';
 import './ambient.css';
 
@@ -25,12 +26,14 @@ type RootLayoutProps = {
 
 export default function RootLayout({ params: { locale }, children }: RootLayoutProps) {
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
       <body
         className={`${mplus.variable} font-sans antialiased w-screen h-screen bg-white dark:bg-gray-800`}
       >
         <Toaster position='top-center' toastOptions={{ unstyled: true }} />
-        {children}
+        <ThemeProvider defaultTheme='system' storageKey='ambient.dark' attribute='class'>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   );

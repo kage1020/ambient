@@ -1,13 +1,10 @@
 'use client';
 
-import { useContext } from 'react';
 import useLocale from '@/hooks/use-locale';
+import usePlaylist from '@/hooks/use-playlist';
+import useDrawer from '@/hooks/use-drawer';
 import { AcceptableLocales } from '@/libs/assets';
-import { getPlaylistNames } from '@/libs/playlist';
 import { cn } from '@/libs/tw';
-import { DrawerSettingsContext } from '@/providers/drawer';
-import { PlaylistContext } from '@/providers/playlist';
-import { DarkContext } from '@/providers/dark';
 
 type DrawerSettingsProps = {
   locale: string;
@@ -15,10 +12,18 @@ type DrawerSettingsProps = {
 
 export default function DrawerSettings({ locale }: DrawerSettingsProps) {
   const { t, changeLocale } = useLocale(locale);
-  const { playlistName, selectPlaylist } = useContext(PlaylistContext);
-  const playlistNames = getPlaylistNames();
-  const { isSettingsOpen, setSettingsOpen } = useContext(DrawerSettingsContext);
-  const { isDark, setDark } = useContext(DarkContext);
+  const {
+    playlistName,
+    categoryName,
+    playlistOptions,
+    playlists,
+    categories,
+    selectPlaylist,
+    selectCategory,
+    setPlaylistOptions,
+    setDark,
+  } = usePlaylist();
+  const { isSettingsOpen, setSettingsOpen } = useDrawer();
 
   return (
     <div
@@ -94,7 +99,7 @@ export default function DrawerSettings({ locale }: DrawerSettingsProps) {
             onChange={(e) => selectPlaylist(e.target.value)}
           >
             <option disabled>{t['Choose a playlist']}</option>
-            {playlistNames.map((c) => (
+            {playlists.map((c) => (
               <option value={c} key={c}>
                 {c}
               </option>
@@ -111,17 +116,27 @@ export default function DrawerSettings({ locale }: DrawerSettingsProps) {
           <select
             id='target-category'
             className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-            disabled
-            defaultValue={t['All categories']}
+            value={categoryName || t['All categories']}
+            onChange={(e) => selectCategory(e.target.value)}
           >
-            <option id='all-category' value='-1' disabled>
+            <option id='all-category' value='all'>
               {t['All categories']}
             </option>
+            {categories.map((c) => (
+              <option value={c} key={c}>
+                {c}
+              </option>
+            ))}
           </select>
         </div>
         <div className='p-4'>
           <label id='toggle-loop' className='relative inline-flex items-center cursor-pointer'>
-            <input type='checkbox' defaultValue='' className='sr-only peer' />
+            <input
+              type='checkbox'
+              checked={playlistOptions.loop}
+              className='sr-only peer'
+              onChange={() => setPlaylistOptions((prev) => ({ ...prev, loop: !prev.loop }))}
+            />
             <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
             <span className='ml-3 text-sm font-medium text-gray-900 dark:text-gray-300'>
               {t['Loop play of one media']}
@@ -130,7 +145,12 @@ export default function DrawerSettings({ locale }: DrawerSettingsProps) {
         </div>
         <div className='p-4'>
           <label id='toggle-randomly' className='relative inline-flex items-center cursor-pointer'>
-            <input type='checkbox' defaultValue='' className='sr-only peer' />
+            <input
+              type='checkbox'
+              checked={playlistOptions.random}
+              className='sr-only peer'
+              onChange={() => setPlaylistOptions((prev) => ({ ...prev, random: !prev.random }))}
+            />
             <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
             <span className='ml-3 text-sm font-medium text-gray-900 dark:text-gray-300'>
               {t['Randomly play']}
@@ -139,7 +159,12 @@ export default function DrawerSettings({ locale }: DrawerSettingsProps) {
         </div>
         <div className='p-4'>
           <label id='toggle-shuffle' className='relative inline-flex items-center cursor-pointer'>
-            <input type='checkbox' defaultValue='' className='sr-only peer' />
+            <input
+              type='checkbox'
+              checked={playlistOptions.shuffle}
+              className='sr-only peer'
+              onChange={() => setPlaylistOptions((prev) => ({ ...prev, shuffle: !prev.shuffle }))}
+            />
             <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
             <span className='ml-3 text-sm font-medium text-gray-900 dark:text-gray-300'>
               {t['Shuffle play']}
@@ -148,7 +173,12 @@ export default function DrawerSettings({ locale }: DrawerSettingsProps) {
         </div>
         <div className='p-4'>
           <label id='toggle-seekplay' className='relative inline-flex items-center cursor-pointer'>
-            <input type='checkbox' defaultValue='' className='sr-only peer' />
+            <input
+              type='checkbox'
+              checked={playlistOptions.seek}
+              className='sr-only peer'
+              onChange={() => setPlaylistOptions((prev) => ({ ...prev, seek: !prev.seek }))}
+            />
             <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
             <span className='ml-3 text-sm font-medium text-gray-900 dark:text-gray-300'>
               {t['Seek and play']}
@@ -165,7 +195,7 @@ export default function DrawerSettings({ locale }: DrawerSettingsProps) {
               id='default-volume-value'
               className='ml-2 px-1 text-yellow-500 dark:text-yellow-400'
             >
-              100
+              {playlistOptions.volume}
             </span>
           </label>
           <input
@@ -173,14 +203,22 @@ export default function DrawerSettings({ locale }: DrawerSettingsProps) {
             type='range'
             min='0'
             max='100'
-            defaultValue='100'
+            value={playlistOptions.volume}
             step='1'
             className='w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-600'
+            onChange={(e) =>
+              setPlaylistOptions((prev) => ({ ...prev, volume: Number(e.target.value) }))
+            }
           />
         </div>
         <div className='p-4'>
           <label id='toggle-fader' className='relative inline-flex items-center cursor-pointer'>
-            <input type='checkbox' defaultValue='' className='sr-only peer' />
+            <input
+              type='checkbox'
+              checked={playlistOptions.fader}
+              className='sr-only peer'
+              onChange={() => setPlaylistOptions((prev) => ({ ...prev, fader: !prev.fader }))}
+            />
             <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
             <span className='ml-3 text-sm font-medium text-gray-900 dark:text-gray-300'>
               {t['Pseudo fader']}
@@ -192,8 +230,8 @@ export default function DrawerSettings({ locale }: DrawerSettingsProps) {
             <input
               type='checkbox'
               className='sr-only peer'
-              checked={isDark}
-              onChange={() => setDark(!isDark)}
+              checked={playlistOptions.dark}
+              onChange={() => setDark((prev) => !prev)}
             />
             <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>
             <span className='ml-3 text-sm font-medium text-gray-900 dark:text-gray-300'>

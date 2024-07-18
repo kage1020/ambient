@@ -1,11 +1,11 @@
 'use client';
 
+import { useContext } from 'react';
 import Image from 'next/image';
 import useLocale from '@/hooks/use-locale';
-import placeholder from '../../public/images/ambient-placeholder.svg';
 import usePlayer from '@/hooks/use-player';
-import { useContext } from 'react';
 import { PlaylistContext } from '@/providers/playlist';
+import placeholder from '../../public/images/ambient-placeholder.svg';
 
 type CarouselProps = {
   locale: string;
@@ -13,7 +13,7 @@ type CarouselProps = {
 
 export default function Carousel({ locale }: CarouselProps) {
   const { t } = useLocale(locale);
-  const { playlist, mediaIndex } = useContext(PlaylistContext);
+  const { mediaList, mediaIndex } = useContext(PlaylistContext);
   const { playPrevious, playNext } = usePlayer();
 
   return (
@@ -21,7 +21,7 @@ export default function Carousel({ locale }: CarouselProps) {
       <button
         className='relative top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none'
         data-carousel-prev
-        disabled={playlist.length <= 1}
+        disabled={mediaList.length <= 1}
         onClick={playPrevious}
       >
         <span className='inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 group-hover:bg-blue-200/50 group-disabled:bg-gray-100 dark:group-hover:bg-blue-400 group-disabled:dark:bg-gray-700 group-focus:outline-none'>
@@ -47,23 +47,23 @@ export default function Carousel({ locale }: CarouselProps) {
         id='carousel-wrapper'
         className='relative h-56 max-w-sm w-96 overflow-hidden rounded-lg md:h-64'
       >
-        {playlist.length > 0 && (
+        {mediaList.length > 0 && (
           <div
-            key={playlist[mediaIndex].mediaId}
+            key={mediaList[mediaIndex].mediaId}
             id='carousel-item-1'
             className='duration-700 ease-in-out'
             data-carousel-item='active'
           >
             <Image
-              src={playlist[mediaIndex].image || placeholder}
+              src={mediaList[mediaIndex].image || placeholder}
               className='absolute block h-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'
-              alt={playlist[mediaIndex].title || 'NO IMAGE'}
+              alt={mediaList[mediaIndex].title || 'NO IMAGE'}
               height={224}
               width={400}
             />
           </div>
         )}
-        {playlist.length === 0 && (
+        {mediaList.length === 0 && (
           <>
             <div id='carousel-item-1' className='duration-700 ease-in-out' data-carousel-item>
               <Image
@@ -86,7 +86,7 @@ export default function Carousel({ locale }: CarouselProps) {
         type='button'
         className='relative top-0 right-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none'
         data-carousel-next
-        disabled={playlist.length <= 1}
+        disabled={mediaList.length <= 1}
         onClick={playNext}
       >
         <span className='inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 group-hover:bg-blue-200/50 group-disabled:bg-gray-100 dark:group-hover:bg-blue-400 group-disabled:dark:bg-gray-700 group-focus:outline-none'>

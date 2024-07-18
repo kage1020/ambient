@@ -1,6 +1,6 @@
 import { useRouter } from 'next/navigation';
-import enUS from '../../public/lang-en.json';
-import jaJP from '../../public/lang-ja.json';
+import enUS from '../../public/languages/lang-en.json';
+import jaJP from '../../public/languages/lang-ja.json';
 
 // TODO: dynamically import the locale file
 export default function useLocale(locale: string) {

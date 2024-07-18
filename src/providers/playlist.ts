@@ -1,32 +1,43 @@
-import { Media } from '@/libs/playlist';
 import { createContext } from 'react';
-import { PlayerState } from 'react-youtube';
-
-export const PLAYER_STATE = {
-  BUFFERING: 3,
-  ENDED: 0,
-  PAUSED: 2,
-  PLAYING: 1,
-  UNSTARTED: -1,
-  VIDEO_CUED: 5,
-};
+import { Media, PlaylistOption } from '@/libs/playlist';
 
 type PlaylistContextType = {
   playlistName: string;
-  playlist: Media[];
+  categoryName: string;
+  mediaList: Media[];
   mediaIndex: number;
-  playerState: PlayerState;
+  playlistOptions: PlaylistOption;
+  playlists: string[];
+  categories: string[];
   selectPlaylist: (name: string) => void;
-  setMediaIndex: (index: number) => void;
-  setPlayerState: (state: number) => void;
+  selectCategory: (name: string) => void;
+  setMediaList: (list: Media[]) => void;
+  setMediaIndex: (value: number | ((prevState: number) => number)) => void;
+  setPlaylistOptions: (
+    options: PlaylistOption | ((prevState: PlaylistOption) => PlaylistOption)
+  ) => void;
+  setDark: (value: boolean | ((prevState: boolean) => boolean)) => void;
 };
 
 export const PlaylistContext = createContext<PlaylistContextType>({
   playlistName: '',
-  playlist: [],
+  categoryName: '',
+  mediaList: [],
   mediaIndex: 0,
-  playerState: PLAYER_STATE.UNSTARTED,
+  playlistOptions: {
+    loop: false,
+    random: false,
+    shuffle: false,
+    seek: false,
+    volume: 100,
+    fader: false,
+  },
+  playlists: [],
+  categories: [],
   selectPlaylist: () => {},
+  selectCategory: () => {},
+  setMediaList: () => {},
   setMediaIndex: () => {},
-  setPlayerState: () => {},
+  setPlaylistOptions: () => {},
+  setDark: () => {},
 });

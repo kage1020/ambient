@@ -1,18 +1,15 @@
-import { useContext, useRef } from 'react';
-import { YouTubeEvent, YouTubePlayer } from 'react-youtube';
-import { getOption } from '@/libs/playlist';
+import { useCallback, useContext } from 'react';
 import { PlaylistContext } from '@/providers/playlist';
+import { PlayerContext } from '@/providers/player';
 
 export default function usePlayer() {
-  const { setMediaIndex, mediaIndex, playlist } = useContext(PlaylistContext);
-  const youtubePlayerRef = useRef<YouTubePlayer | null>(null);
-  const videoPlayerRef = useRef<HTMLVideoElement | null>(null);
+  const { mediaList, mediaIndex, playlistOptions, setMediaIndex } = useContext(PlaylistContext);
+  const { playerRef, playing, setPlaying } = useContext(PlayerContext);
 
-  const playPrevious = () => {
-    const isRandom = Boolean(getOption('random'));
-    if (isRandom && playlist.length > 1) {
+  const playPrevious = useCallback(() => {
+    if (playlistOptions.random && mediaList.length > 1) {
       while (true) {
-        const randomIndex = Math.floor(Math.random() * playlist.length);
+        const randomIndex = Math.floor(Math.random() * mediaList.length);
         if (randomIndex !== mediaIndex) {
           setMediaIndex(randomIndex);
           break;
@@ -20,45 +17,29 @@ export default function usePlayer() {
       }
       return;
     }
-    setMediaIndex(mediaIndex - 1);
-  };
+    setMediaIndex((p) => p - 1);
+  }, [mediaIndex, mediaList.length, playlistOptions.random, setMediaIndex]);
 
-  const playNext = () => {
-    const isRandom = Boolean(getOption('random'));
-    if (isRandom && playlist.length > 1) {
+  const playNext = useCallback(() => {
+    if (playlistOptions.shuffle && mediaList.length > 1) {
       while (true) {
-        const randomIndex = Math.floor(Math.random() * playlist.length);
+        const randomIndex = Math.floor(Math.random() * mediaList.length);
         if (randomIndex !== mediaIndex) {
           setMediaIndex(randomIndex);
           break;
         }
       }
       return;
+    } else {
+      setMediaIndex((p) => p + 1);
     }
-    setMediaIndex(mediaIndex + 1);
-  };
-
-  const onPlayerReady = (e: YouTubeEvent) => {
-    youtubePlayerRef.current = e.target;
-  };
-
-  const onPlay = (e?: YouTubeEvent<number>) => {
-    if (youtubePlayerRef.current) youtubePlayerRef.current.playVideo();
-    else if (videoPlayerRef.current) videoPlayerRef.current.play();
-  };
-
-  const onPause = (e?: YouTubeEvent<number>) => {
-    if (youtubePlayerRef.current) youtubePlayerRef.current.pauseVideo();
-    else if (videoPlayerRef.current) videoPlayerRef.current.pause();
-  };
+  }, [mediaIndex, mediaList.length, playlistOptions.shuffle, setMediaIndex]);
 
   return {
-    youtubePlayerRef,
-    videoPlayerRef,
+    playerRef,
+    playing,
+    setPlaying,
     playPrevious,
     playNext,
-    onPlayerReady,
-    onPlay,
-    onPause,
   };
 }
