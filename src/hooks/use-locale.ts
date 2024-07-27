@@ -13,3 +13,5 @@ export default function useLocale(locale: string) {
 
   return { t, changeLocale };
 }
+
+export type Locale = ReturnType<typeof useLocale>;

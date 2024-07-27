@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-import flowbite from 'flowbite/plugin';
+import flowbite from 'flowbite-react/tailwind';
 
 const config: Config = {
   darkMode: 'class',
@@ -7,22 +7,17 @@ const config: Config = {
     './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
     './src/components/**/*.{js,ts,jsx,tsx,mdx}',
     './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-    './node_modules/flowbite-react/lib/**/*.js',
+    flowbite.content(),
   ],
   theme: {
     extend: {
       animation: {
-        marquee: 'marquee 10s linear infinite',
-        marquee2: 'marquee2 10s linear infinite',
+        marquee: 'marquee var(--duration) linear infinite',
       },
       keyframes: {
         marquee: {
           '0%': { transform: 'translateX(0%)' },
-          '100%': { transform: 'translateX(-200%)' },
-        },
-        marquee2: {
-          '0%': { transform: 'translateX(100%)' },
-          '100%': { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(calc(-100% - 0.5rem))' },
         },
       },
       fontFamily: {
@@ -51,6 +46,6 @@ const config: Config = {
       },
     },
   },
-  plugins: [flowbite],
+  plugins: [flowbite.plugin()],
 };
 export default config;

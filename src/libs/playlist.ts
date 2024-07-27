@@ -67,26 +67,18 @@ const defaultPlaylist: Playlist = {
 };
 
 export async function getAllPlaylists() {
-  if (process.env.NODE_ENV === 'development')
-    return (await fs.readdir(process.cwd() + '/public/playlists')).filter((file) =>
-      file.endsWith('.json')
-    );
-  else
-    return (await fs.readdir(process.cwd() + '/playlists')).filter((file) =>
-      file.endsWith('.json')
-    );
+  return (await fs.readdir(process.cwd() + '/public/playlists')).filter((file) =>
+    file.endsWith('.json')
+  );
 }
 
 export async function getPlaylist(filename: string) {
   const files = await getAllPlaylists();
   const file = files.find((file) => file === filename);
   if (!file) return defaultPlaylist;
-  if (process.env.NODE_ENV === 'development')
-    return JSON.parse(
-      await fs.readFile(process.cwd() + '/public/playlists/' + file, 'utf-8')
-    ) as Playlist;
-  else
-    return JSON.parse(await fs.readFile(process.cwd() + '/playlists/' + file, 'utf-8')) as Playlist;
+  return JSON.parse(
+    await fs.readFile(process.cwd() + '/public/playlists/' + file, 'utf-8')
+  ) as Playlist;
 }
 
 export async function getCategories(filename: string) {

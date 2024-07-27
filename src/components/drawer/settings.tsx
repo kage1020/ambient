@@ -1,10 +1,12 @@
 'use client';
 
+import { Drawer } from 'flowbite-react';
 import useLocale from '@/hooks/use-locale';
 import usePlaylist from '@/hooks/use-playlist';
 import useDrawer from '@/hooks/use-drawer';
 import { AcceptableLocales } from '@/libs/assets';
 import { cn } from '@/libs/tw';
+import useMediaQuery from '@/hooks/use-media-query';
 
 type DrawerSettingsProps = {
   locale: string;
@@ -24,16 +26,17 @@ export default function DrawerSettings({ locale }: DrawerSettingsProps) {
     setDark,
   } = usePlaylist();
   const { isSettingsOpen, setSettingsOpen } = useDrawer();
+  const { isMd } = useMediaQuery();
 
   return (
-    <div
+    <Drawer
+      open={isSettingsOpen}
+      onClose={() => setSettingsOpen(false)}
       id='drawer-settings'
-      className={cn(
-        'fixed top-0 right-0 z-50 h-screen overflow-y-auto transition-transform bg-white border-l border-gray-200 w-80 dark:bg-gray-800 dark:border-gray-600 dark:text-white shadow dark:shadow-md',
-        isSettingsOpen ? 'translate-x-0' : 'translate-x-full'
-      )}
+      className='p-0 border-l border-gray-200 dark:border-gray-600 dark:text-white shadow dark:shadow-md'
       tabIndex={-1}
-      aria-labelledby='drawer-settings-label'
+      position='right'
+      backdrop={!isMd}
     >
       <div className='p-4 fixed top-0 right-0 z-auto w-80 h-14 flex flex-nowrap justify-between items-center bg-white border-r border-b dark:bg-gray-800 dark:border-gray-600'>
         <h5
@@ -251,7 +254,10 @@ export default function DrawerSettings({ locale }: DrawerSettingsProps) {
             className='bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
             disabled={AcceptableLocales.length <= 1}
             value={AcceptableLocales.find((v) => v.code === locale)?.code || t['$language']}
-            onChange={(e) => changeLocale(e.target.value)}
+            onChange={(e) => {
+              changeLocale(e.target.value);
+              console.log(e.target.value);
+            }}
           >
             {AcceptableLocales.length <= 1 && (
               <option id='default-language' value='' disabled>
@@ -267,6 +273,6 @@ export default function DrawerSettings({ locale }: DrawerSettingsProps) {
           </select>
         </div>
       </div>
-    </div>
+    </Drawer>
   );
 }

@@ -1,8 +1,10 @@
 'use client';
 
+import { useRef } from 'react';
 import ReactPlayer from 'react-player';
 import Carousel from '@/components/carousel';
 import useLocale from '@/hooks/use-locale';
+import useMediaQuery from '@/hooks/use-media-query';
 import useMessage from '@/hooks/use-message';
 import usePlayer from '@/hooks/use-player';
 import usePlaylist from '@/hooks/use-playlist';
@@ -18,6 +20,8 @@ export default function Player({ locale }: PlayerProps) {
   const { showMessage } = useMessage();
   const { playerRef, playing, setPlaying, playNext } = usePlayer();
   const { playlistOptions, mediaList, mediaIndex } = usePlaylist();
+  const { windowSize } = useMediaQuery();
+  const marqueeRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className='flex flex-col items-center max-w-full w-full h-full mt-0 mx-auto mb-16 z-10 overflow-y-auto overflow-x-hidden'>
@@ -25,14 +29,36 @@ export default function Player({ locale }: PlayerProps) {
       <figure className='w-full flex flex-col items-center gap-1 mt-4 mb-16 select-none'>
         <figcaption
           id='media-caption'
-          className='text-gray-900 text-lg font-normal dark:text-white w-md flex justify-center items-center mb-2 whitespace-nowrap overflow-hidden'
+          className='text-gray-900 text-lg font-normal dark:text-white max-w-full flex justify-center items-center gap-2 mb-2 whitespace-nowrap overflow-hidden'
         >
-          <div className='animate-marquee md:animate-none'>
-            {mediaList.length > 0 && formatMediaCaption(playlistOptions, mediaList[mediaIndex])}
-          </div>
-          <div className='animate-marquee2 md:animate-none md:hidden' aria-hidden='true'>
-            {mediaList.length > 0 && formatMediaCaption(playlistOptions, mediaList[mediaIndex])}
-          </div>
+          {mediaList.length > 0 &&
+            Array.from({
+              length:
+                (marqueeRef.current?.clientWidth || 0) > windowSize.width ||
+                (marqueeRef.current?.clientWidth || 0) > 640
+                  ? 5
+                  : 1,
+            }).map((_, i) => (
+              <div
+                key={i}
+                ref={i === 0 ? marqueeRef : null}
+                className={cn(
+                  (marqueeRef.current?.clientWidth || 0) > windowSize.width ||
+                    (marqueeRef.current?.clientWidth || 0) > 640
+                    ? 'animate-marquee flex-shrink-0'
+                    : ''
+                )}
+                style={
+                  {
+                    '--duration': Math.floor((marqueeRef.current?.clientWidth || 0) / 32) + 's',
+                  } as React.CSSProperties
+                }
+                dangerouslySetInnerHTML={{
+                  __html: formatMediaCaption(playlistOptions, mediaList[mediaIndex]),
+                }}
+                aria-hidden={i > 0}
+              ></div>
+            ))}
         </figcaption>
         <div
           id='embed-wrapper'

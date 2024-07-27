@@ -1,11 +1,12 @@
 'use client';
 
-import { useContext } from 'react';
 import Image from 'next/image';
+import { NextIcon, PreviousIcon } from '@/components/icons';
 import useLocale from '@/hooks/use-locale';
 import usePlayer from '@/hooks/use-player';
-import { PlaylistContext } from '@/providers/playlist';
+import usePlaylist from '@/hooks/use-playlist';
 import placeholder from '../../public/images/ambient-placeholder.svg';
+import { cn } from '@/libs/tw';
 
 type CarouselProps = {
   locale: string;
@@ -13,7 +14,7 @@ type CarouselProps = {
 
 export default function Carousel({ locale }: CarouselProps) {
   const { t } = useLocale(locale);
-  const { mediaList, mediaIndex } = useContext(PlaylistContext);
+  const { mediaList, mediaIndex, playlistOptions } = usePlaylist();
   const { playPrevious, playNext } = usePlayer();
 
   return (
@@ -25,21 +26,7 @@ export default function Carousel({ locale }: CarouselProps) {
         onClick={playPrevious}
       >
         <span className='inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 group-hover:bg-blue-200/50 group-disabled:bg-gray-100 dark:group-hover:bg-blue-400 group-disabled:dark:bg-gray-700 group-focus:outline-none'>
-          <svg
-            className='w-4 h-4 text-gray-400 dark:text-gray-300'
-            aria-hidden='true'
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 6 10'
-          >
-            <path
-              stroke='currentColor'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth='2'
-              d='M5 1 1 5l4 4'
-            />
-          </svg>
+          <PreviousIcon />
           <span className='sr-only'>{t['Previous Item']}</span>
         </span>
       </button>
@@ -56,7 +43,10 @@ export default function Carousel({ locale }: CarouselProps) {
           >
             <Image
               src={mediaList[mediaIndex].image || placeholder}
-              className='absolute block h-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'
+              className={cn(
+                'absolute block h-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 opacity-100',
+                playlistOptions.dark && 'opacity-70'
+              )}
               alt={mediaList[mediaIndex].title || 'NO IMAGE'}
               height={224}
               width={400}
@@ -68,14 +58,20 @@ export default function Carousel({ locale }: CarouselProps) {
             <div id='carousel-item-1' className='duration-700 ease-in-out' data-carousel-item>
               <Image
                 src={placeholder}
-                className='absolute block h-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'
+                className={cn(
+                  'absolute block h-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 opacity-100',
+                  playlistOptions.dark && 'opacity-70'
+                )}
                 alt='NO IMAGE'
               />
             </div>
             <div id='carousel-item-2' className='duration-700 ease-in-out' data-carousel-item>
               <Image
                 src={placeholder}
-                className='absolute block h-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2'
+                className={cn(
+                  'absolute block h-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2 opacity-100',
+                  playlistOptions.dark && 'opacity-70'
+                )}
                 alt='NO IMAGE'
               />
             </div>
@@ -90,21 +86,7 @@ export default function Carousel({ locale }: CarouselProps) {
         onClick={playNext}
       >
         <span className='inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-700 group-hover:bg-blue-200/50 group-disabled:bg-gray-100 dark:group-hover:bg-blue-400 group-disabled:dark:bg-gray-700 group-focus:outline-none'>
-          <svg
-            className='w-4 h-4 text-gray-400 dark:text-gray-300'
-            aria-hidden='true'
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 6 10'
-          >
-            <path
-              stroke='currentColor'
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              strokeWidth='2'
-              d='m1 9 4-4-4-4'
-            />
-          </svg>
+          <NextIcon />
           <span className='sr-only'>{t['Next Item']}</span>
         </span>
       </button>

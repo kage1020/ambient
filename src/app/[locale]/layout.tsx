@@ -3,7 +3,6 @@ import local from 'next/font/local';
 import { Toaster } from 'sonner';
 import { ThemeProvider } from 'next-themes';
 import './globals.css';
-import './ambient.css';
 
 const mplus = local({
   src: '../../../public/fonts/mplus-1p-regular.woff',

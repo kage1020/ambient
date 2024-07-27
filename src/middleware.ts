@@ -9,7 +9,7 @@ export function middleware(request: NextRequest) {
   if (pathnameHasLocale) return NextResponse.next();
 
   const locale = getLocale();
-  request.nextUrl.pathname = `/${locale}${pathname}`;
+  request.nextUrl.pathname = `/${locale}`;
 
   return NextResponse.redirect(request.nextUrl);
 }

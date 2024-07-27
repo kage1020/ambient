@@ -7,6 +7,10 @@ export default function useMediaQuery() {
   });
 
   useEffect(() => {
+    setWindowSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
     const handleResize = () => {
       setWindowSize({
         width: window.innerWidth,
@@ -19,6 +23,8 @@ export default function useMediaQuery() {
   }, []);
 
   return {
-    isMd: windowSize.width >= 768,
+    isMd: windowSize.width >= 640,
+    isLg: windowSize.width >= 1282,
+    windowSize,
   };
 }

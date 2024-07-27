@@ -2,11 +2,12 @@
 
 import { useContext } from 'react';
 import Image from 'next/image';
+import { Drawer } from 'flowbite-react';
 import useLocale from '@/hooks/use-locale';
 import { getYoutubeThumbnailURL } from '@/libs/format';
-import { cn } from '@/libs/tw';
 import { DrawerPlaylistContext } from '@/providers/drawer';
 import { PlaylistContext } from '@/providers/playlist';
+import useMediaQuery from '@/hooks/use-media-query';
 
 type DrawerPlaylistProps = {
   locale: string;
@@ -16,16 +17,15 @@ export default function DrawerPlaylist({ locale }: DrawerPlaylistProps) {
   const { t } = useLocale(locale);
   const { isPlaylistOpen, setPlaylistOpen } = useContext(DrawerPlaylistContext);
   const { mediaList, mediaIndex, setMediaIndex } = useContext(PlaylistContext);
+  const { isMd } = useMediaQuery();
 
   return (
-    <div
-      id='drawer-playlist'
-      className={cn(
-        'fixed top-0 left-0 z-50 h-screen overflow-y-auto transition-transform bg-white border-r border-gray-200 w-80 dark:bg-gray-800 dark:border-gray-600 dark:text-white shadow dark:shadow-md',
-        isPlaylistOpen ? 'translate-x-0' : '-translate-x-full'
-      )}
+    <Drawer
+      open={isPlaylistOpen}
+      onClose={() => setPlaylistOpen(false)}
+      className='p-0 border-r border-gray-200 dark:border-gray-600 dark:text-white shadow dark:shadow-md'
       tabIndex={-1}
-      aria-labelledby='drawer-playlist-label'
+      backdrop={!isMd}
     >
       <div className='p-4 fixed top-0 left-0 z-auto w-80 h-14 flex flex-nowrap justify-between items-center bg-white border-r border-b dark:bg-gray-800 dark:border-gray-600'>
         <h5
@@ -116,6 +116,6 @@ export default function DrawerPlaylist({ locale }: DrawerPlaylistProps) {
           </div>
         )}
       </div>
-    </div>
+    </Drawer>
   );
 }

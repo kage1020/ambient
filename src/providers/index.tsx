@@ -8,6 +8,7 @@ import { ModalContext } from '@/providers/modal';
 import { PlaylistContext } from '@/providers/playlist';
 import { PlayerContext } from '@/providers/player';
 import { useTheme } from 'next-themes';
+import useMediaQuery from '@/hooks/use-media-query';
 
 type ProvidersProps = {
   playlists: string[];
@@ -41,6 +42,7 @@ export default function AmbientProviders({
   const playerRef = useRef<ReactPlayer | null>(null);
   const [playing, setPlaying] = useState(false);
   const { theme, setTheme } = useTheme();
+  const { isLg } = useMediaQuery();
 
   const selectPlaylist = useCallback((name: string) => {
     localStorage.setItem('ambient.playlist', name);
@@ -56,11 +58,15 @@ export default function AmbientProviders({
     (value: number | ((prevState: number) => number)) => {
       if (typeof value === 'function') {
         _setMediaIndex(value(mediaIndex) % mediaList.length);
+        document.title = `${
+          mediaList[value(mediaIndex) % mediaList.length].title
+        } - Ambient Media Player`;
         return;
       }
       _setMediaIndex(value % mediaList.length);
+      document.title = `${mediaList[value % mediaList.length].title} - Ambient Media Player`;
     },
-    [mediaIndex, mediaList.length]
+    [mediaIndex, mediaList]
   );
 
   const setPlaylistOptions = useCallback(
@@ -91,9 +97,9 @@ export default function AmbientProviders({
     [playlistOptions.dark, setTheme]
   );
 
-  const shuffleMediaList = useCallback(() => {
-    return mediaList.sort(() => Math.random() - 0.5);
-  }, [mediaList]);
+  const shuffleMediaList = useCallback((items: Media[]) => {
+    return items.sort(() => Math.random() - 0.5);
+  }, []);
 
   // initialize
   useEffect(() => {
@@ -110,6 +116,10 @@ export default function AmbientProviders({
       const value = JSON.parse(options);
       _setPlaylistOptions(value);
       setTheme(value.dark ? 'dark' : 'light');
+    }
+    if (window.innerWidth < 640) {
+      setPlaylistOpen(false);
+      setSettingsOpen(false);
     }
   }, [setTheme]);
 
@@ -131,7 +141,7 @@ export default function AmbientProviders({
 
   useEffect(() => {
     const items = allMediaLists[playlistName]?.[categoryName] || [];
-    setMediaList(playlistOptions.shuffle ? shuffleMediaList() : items);
+    setMediaList(playlistOptions.shuffle ? shuffleMediaList(items) : items);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryName, playlistName, playlistOptions.shuffle, shuffleMediaList]);
 

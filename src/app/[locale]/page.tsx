@@ -1,7 +1,7 @@
 import DrawerPlaylist from '@/components/drawer/playlist';
 import DrawerSettings from '@/components/drawer/settings';
 import Menu from '@/components/menu';
-import Modal from '@/components/modal';
+import Modal from '@/components/modal/modal';
 import Player from '@/components/player';
 import { getAllPlaylists, getCategories, getMediaList, Media } from '@/libs/playlist';
 import AmbientProviders from '@/providers';
@@ -14,7 +14,7 @@ type HomeProps = {
 
 export default async function Home({ params: { locale } }: HomeProps) {
   const playlists = await getAllPlaylists();
-  const allCategoryItems = await await Promise.all(
+  const allCategoryItems = await Promise.all(
     playlists.map(async (item) => await getCategories(item))
   );
   const allCategories = playlists.reduce(

@@ -101,8 +101,8 @@
     "Additionally, since Ambient is designed as a web application, anyone can use it by accessing the application's pages with a common web browser.": "さらに、AmbientはWebアプリケーションとして設計されているため、一般的なWebブラウザでアプリケーションのページにアクセスすることで、誰でも使用できます。",
     "However, if you want to use Ambient on your local PC, you will need to prepare a PHP execution environment and launch your application onto that environment.": "ただし、ローカルPC上でAmbientを使用する場合は、PHP実行環境を準備し、その環境上でアプリケーションを起動する必要があります。",
     "Learn more about the technology Ambient uses below:": "Ambientが使用するテクノロジーの詳細については、以下をご覧ください：",
-    "YouTube IFrame Player API": "",
-    "tailwindcss": "",
-    "Flowbite": "",
+    "YouTube IFrame Player API": "YouTube IFrame Player API",
+    "tailwindcss": "tailwindcss",
+    "Flowbite": "Flowbite",
     "Version:": "バージョン："
 }
