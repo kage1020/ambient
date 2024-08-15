@@ -98,7 +98,7 @@ export default function AmbientProviders({
   );
 
   const shuffleMediaList = useCallback((items: Media[]) => {
-    return items.sort(() => Math.random() - 0.5);
+    return items.map(item => ({ ...item, random: Math.random() })).sort((a, b) => a.random - b.random).map(item => ({ ...item, random: undefined })) as Media[];
   }, []);
 
   // initialize
