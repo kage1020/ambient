@@ -1,25 +1,35 @@
+import 'server-only';
+import fs from 'node:fs/promises';
+import { LanguageTranslation } from '@/types';
 import { headers } from 'next/headers';
-import { AcceptableLocales } from '@/libs/assets';
-import enUS from '../../public/languages/lang-en.json';
-import jaJP from '../../public/languages/lang-ja.json';
+import {} from 'next/navigation';
 
-export function getLocale() {
-  const acceptLanguage = headers().get('accept-language');
-  if (!acceptLanguage) return 'en';
-  const candidate = acceptLanguage.split(',').map((l) => l.split(';')[0])[0];
-  return (
-    AcceptableLocales.some((locale) => locale.code === candidate) ? candidate : 'en'
-  ) as (typeof AcceptableLocales)[number]['code'];
+export async function loadLanguageFiles() {
+  const files = (await fs.readdir(process.cwd() + '/public/languages')).filter(
+    (file) => file.endsWith('.json') && file.includes('-')
+  );
+  return files;
 }
 
-// TODO: dynamically import the locale file
-export function getLocaleText() {
-  const locale = getLocale();
+export async function loadLanguageFile(filename: string) {
+  const content = await fs.readFile(process.cwd() + '/public/languages/' + filename, 'utf-8');
+  return JSON.parse(content) as LanguageTranslation;
+}
 
-  switch (locale) {
-    case 'ja':
-      return { locale, t: jaJP };
-    default:
-      return { locale, t: enUS };
-  }
+export async function getTranslation(locale: string) {
+  const files = await loadLanguageFiles();
+  let file = files.find((f) => f.includes(locale));
+  if (!file) file = files.find((f) => f.includes('en'))!;
+  return await loadLanguageFile(file);
+}
+
+export async function isValidLocale(locale: string) {
+  const files = await loadLanguageFiles();
+  return files.some((f) => f.includes(locale));
+}
+
+export async function getLocale() {
+  const pathname = headers().get('X-Pathname');
+  if (!pathname) return 'en';
+  return (await isValidLocale(pathname.slice(1))) ? pathname.slice(1, 3) : 'en';
 }

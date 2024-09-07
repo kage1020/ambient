@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 
 export default function useMediaQuery() {
   const [windowSize, setWindowSize] = useState({
-    width: 1920,
-    height: 1080,
+    width: 0,
+    height: 0,
   });
 
   useEffect(() => {

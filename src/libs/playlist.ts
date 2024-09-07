@@ -1,124 +1,80 @@
-'use server';
-
 import 'server-only';
 import fs from 'node:fs/promises';
-import { getYoutubeThumbnailURL } from '@/libs/format';
+import { allCategory } from '@/const';
+import { shuffleMedia } from '@/libs/utils';
+import { Media, MediaWithoutId, Playlist, PlaylistWithoutId } from '@/types';
 
-export type Media = {
-  mediaId: string;
-  title: string;
-  file?: string;
-  videoid?: string;
-  desc?: string;
-  artist?: string;
-  image?: string;
-  volume?: number;
-  start?: number;
-  end?: number;
-  fadein?: number;
-  fadeout?: number;
-  fs?: boolean;
-  cc?: boolean;
-  [key: string]: any;
-};
-
-export type PlaylistOption = {
-  autoplay?: boolean;
-  controls?: boolean;
-  loop?: boolean;
-  random?: boolean;
-  shuffle?: boolean;
-  seek?: boolean;
-  volume?: number;
-  fader?: boolean;
-  dark?: boolean;
-  background?: string;
-  caption?: string;
-  playlist?: string;
-  fs?: boolean;
-  cc?: boolean;
-  rel?: boolean;
-};
-
-export type Playlist = {
-  options: PlaylistOption;
-  [category: string]: Media[] | PlaylistOption;
-};
-
-const defaultPlaylist: Playlist = {
-  options: {
-    autoplay: true,
-    controls: true,
-    loop: false,
-    random: false,
-    shuffle: false,
-    seek: false,
-    volume: 100,
-    fader: false,
-    dark: false,
-    background: '#000',
-    caption: '%artist% - %title%',
-    playlist: 'default',
-    fs: false,
-    cc: false,
-    rel: false,
-  },
-  category: [] as Media[],
-};
-
-export async function getAllPlaylists() {
-  return (await fs.readdir(process.cwd() + '/public/playlists')).filter((file) =>
+export async function loadPlaylistFiles() {
+  const files = (await fs.readdir(process.cwd() + '/public/playlists')).filter((file) =>
     file.endsWith('.json')
   );
+  return files;
 }
 
-export async function getPlaylist(filename: string) {
-  const files = await getAllPlaylists();
-  const file = files.find((file) => file === filename);
-  if (!file) return defaultPlaylist;
-  return JSON.parse(
-    await fs.readFile(process.cwd() + '/public/playlists/' + file, 'utf-8')
-  ) as Playlist;
+export async function loadPlaylistFile(filename?: string) {
+  if (!filename) return null;
+
+  try {
+    const exists = (await fs.lstat(process.cwd() + '/public/playlists/' + filename)).isFile();
+    if (!exists) return null;
+    return JSON.parse(
+      await fs.readFile(process.cwd() + '/public/playlists/' + filename, 'utf-8')
+    ) as PlaylistWithoutId;
+  } catch (e) {
+    console.error('error');
+    return null;
+  }
 }
 
-export async function getCategories(filename: string) {
-  const playlist = await getPlaylist(filename);
+export async function addMediaId(mediaList: MediaWithoutId[]): Promise<Media[]> {
+  return mediaList.map((media) => ({ ...media, mediaId: media.videoid || media.title }));
+}
+
+export async function getCategoriesByPlaylist(playlist: Playlist) {
   return Object.keys(playlist).filter((key) => key !== 'options');
 }
 
-export async function getMediaList(filename: string, category: string, shuffle?: boolean) {
-  const playlist = await getPlaylist(filename);
+export async function validateCategory(playlist: Playlist, categoryName?: string) {
+  if (!categoryName) return false;
+  return (await getCategoriesByPlaylist(playlist)).includes(categoryName);
+}
 
-  if (category === 'all') {
-    const items = (
-      Object.keys(playlist)
-        .filter((key) => key !== 'options')
-        .map((key) => playlist[key])
-        .flat() as Omit<Media, 'mediaId'>[]
-    ).map((media) => ({
-      ...media,
-      mediaId: media.videoid || media.title,
-      image: media.image || getYoutubeThumbnailURL(media.videoid),
-    })) as Media[];
-    if (shuffle) return items.sort(() => Math.random() - 0.5);
-    return items;
+export async function getMediaListByPlaylist(
+  playlist: PlaylistWithoutId | null,
+  category: string | typeof allCategory
+) {
+  if (!playlist) return [];
+  if (category === allCategory) {
+    const items = Object.keys(playlist)
+      .filter((key) => key !== 'options')
+      .map((key) => playlist[key])
+      .flat();
+    return addMediaId(items);
   }
-
-  const items = ((playlist[category] || []) as Omit<Media, 'mediaId'>[]).map((media) => ({
-    ...media,
-    mediaId: media.videoid || media.title,
-    image: media.image || getYoutubeThumbnailURL(media.videoid),
-  })) as Media[];
-  if (shuffle) return items.sort(() => Math.random() - 0.5);
-  return items;
+  return addMediaId(playlist[category]);
 }
 
-export async function getOptions(filename: string) {
-  const playlist = await getPlaylist(filename);
-  return { ...defaultPlaylist.options, ...playlist.options };
-}
+export async function getMediaData(
+  playlistName?: string,
+  categoryName?: string,
+  mediaIndex?: string,
+  shuffle?: boolean
+) {
+  const playlist = await loadPlaylistFile(playlistName);
+  const cName =
+    playlist && (await validateCategory(playlist, categoryName)) ? categoryName : undefined;
+  const mediaList = playlist && cName ? await getMediaListByPlaylist(playlist, cName) : [];
+  const shuffledList = shuffle ? shuffleMedia(mediaList) : mediaList;
+  const items = shuffle ? shuffledList : mediaList;
 
-export async function getOption(filename: string, name: keyof PlaylistOption) {
-  const playlist = await getPlaylist(filename);
-  return playlist.options[name];
+  return {
+    playlistName: playlist && playlistName ? playlistName : undefined,
+    playlist,
+    playlists: await loadPlaylistFiles(),
+    categoryName: cName,
+    categories: playlist ? await getCategoriesByPlaylist(playlist) : [],
+    mediaList: items,
+    mediaIndex: mediaIndex ? parseInt(mediaIndex) : undefined,
+    currentMedia: mediaIndex ? items[parseInt(mediaIndex)] : null,
+  };
 }

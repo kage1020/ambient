@@ -1,19 +1,38 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { AcceptableLocales } from '@/libs/assets';
-import { getLocale } from '@/libs/locale';
+import { defaultLocale } from '@/const';
 
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const pathnameHasLocale = AcceptableLocales.some((locale) => pathname.includes(locale.code));
+function validateLocale(pathname: string) {
+  const locale = pathname.split('/')[1];
+  // TODO: country name to country code
+  return /^[a-z]{2}$/.test(locale);
+}
 
-  if (pathnameHasLocale) return NextResponse.next();
-
-  const locale = getLocale();
-  request.nextUrl.pathname = `/${locale}`;
-
-  return NextResponse.redirect(request.nextUrl);
+function addSeed(searchParams: URLSearchParams) {
+  const newParams = new URLSearchParams(searchParams.toString());
+  newParams.set('s', new Date().getTime().toString());
+  return newParams;
 }
 
 export const config = {
-  matcher: ['/((?!api|static|.*\\..*|_next).*)'],
+  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)'],
 };
+
+export function middleware(request: NextRequest) {
+  const { pathname, searchParams } = request.nextUrl;
+  const acceptLanguage = request.headers.get('Accept-Language');
+  const candidateLocale =
+    acceptLanguage?.split(',').map((l) => l.split(';')[0])[0] || defaultLocale;
+  const seed = searchParams.get('s');
+  const isLocaleValid = validateLocale(pathname);
+  const newParams = seed ? searchParams : addSeed(searchParams);
+
+  const headers = new Headers(request.headers);
+  headers.set('X-Pathname', pathname);
+  headers.set('X-Search-Params', newParams.toString());
+
+  if (isLocaleValid && seed) return NextResponse.next({ headers });
+
+  request.nextUrl.pathname = isLocaleValid ? pathname : `/${candidateLocale}`;
+  request.nextUrl.search = newParams.toString();
+  return NextResponse.redirect(request.nextUrl);
+}

@@ -1,56 +1,59 @@
-import DrawerPlaylist from '@/components/drawer/playlist';
-import DrawerSettings from '@/components/drawer/settings';
+import PlaylistDrawer from '@/components/drawer/playlist';
+import SettingDrawer from '@/components/drawer/setting';
 import Menu from '@/components/menu';
-import Modal from '@/components/modal/modal';
+import OptionModal from '@/components/modal';
 import Player from '@/components/player';
-import { getAllPlaylists, getCategories, getMediaList, Media } from '@/libs/playlist';
-import AmbientProviders from '@/providers';
+import { JotaiHydrator } from '@/components/provider';
+import { getTranslation } from '@/libs/locale';
+import { getMediaData } from '@/libs/playlist';
+import { Metadata } from 'next';
+import { SearchParams } from '@/types';
 
 type HomeProps = {
   params: {
     locale: string;
   };
+  searchParams: SearchParams;
 };
 
-export default async function Home({ params: { locale } }: HomeProps) {
-  const playlists = await getAllPlaylists();
-  const allCategoryItems = await Promise.all(
-    playlists.map(async (item) => await getCategories(item))
+export async function generateMetadata({
+  params: { locale },
+  searchParams,
+}: HomeProps): Promise<Metadata> {
+  const t = await getTranslation(locale);
+  const { mediaIndex, mediaList } = await getMediaData(
+    searchParams.p,
+    searchParams.c,
+    searchParams.m
   );
-  const allCategories = playlists.reduce(
-    (acc, item, index) => ({ ...acc, [item]: allCategoryItems[index] }),
-    {}
-  ) as { [key: string]: string[] };
-  const allMediaListItems = await Promise.all(
-    Object.entries(allCategories).map(
-      async ([playlist, categories]: [string, string[]]) =>
-        await Promise.all(
-          categories.map(async (category) => await getMediaList(playlist, category))
-        )
-    )
+  return {
+    title: mediaIndex
+      ? `${mediaList[mediaIndex]?.title} - ${t['Ambient Media Player']}`
+      : t['Ambient Media Player'],
+  };
+}
+
+export default async function Home({ params: { locale }, searchParams }: HomeProps) {
+  const { playlistName, categoryName, mediaIndex, playlist, mediaList } = await getMediaData(
+    searchParams.p,
+    searchParams.c,
+    searchParams.m
   );
-  const allMediaLists = Object.entries(allCategories).reduce(
-    (acc, [playlist, categories], index) => ({
-      ...acc,
-      [playlist]: categories.reduce(
-        (acc, category, i) => ({ ...acc, [category]: allMediaListItems[index][i] }),
-        { all: allMediaListItems[index].flat(1) as Media[] }
-      ),
-    }),
-    {}
-  ) as { [key: string]: { [key: string]: Media[] } };
 
   return (
-    <AmbientProviders
-      playlists={playlists}
-      allCategories={allCategories}
-      allMediaLists={allMediaLists}
+    <JotaiHydrator
+      playlistName={playlistName}
+      categoryName={categoryName}
+      mediaIndex={mediaIndex}
+      playlist={playlist}
+      mediaList={mediaList}
+      seed={searchParams.s}
     >
-      <Player locale={locale} />
-      <Menu locale={locale} />
-      <DrawerPlaylist locale={locale} />
-      <DrawerSettings locale={locale} />
-      <Modal locale={locale} />
-    </AmbientProviders>
+      <Player />
+      <Menu />
+      <PlaylistDrawer />
+      <SettingDrawer />
+      <OptionModal />
+    </JotaiHydrator>
   );
 }

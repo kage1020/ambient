@@ -1,7 +1,7 @@
-import type { Metadata } from 'next';
 import local from 'next/font/local';
 import { Toaster } from 'sonner';
-import { ThemeProvider } from 'next-themes';
+import Provider from '@/components/provider';
+import { Metadata } from 'next';
 import './globals.css';
 
 const mplus = local({
@@ -10,12 +10,6 @@ const mplus = local({
   variable: '--font-mplus',
 });
 
-export const metadata: Metadata = {
-  title: 'Ambient Media Player',
-  description:
-    'Ambient is a media player that runs on a web browser using YouTube IFrame Player API.',
-};
-
 type RootLayoutProps = {
   params: {
     locale: string;
@@ -23,16 +17,21 @@ type RootLayoutProps = {
   children: React.ReactNode;
 };
 
-export default function RootLayout({ params: { locale }, children }: RootLayoutProps) {
+export const metadata: Metadata = {
+  description:
+    'Ambient is a media player that runs on a web browser using YouTube IFrame Player API.',
+};
+
+export default async function RootLayout({ params: { locale }, children }: RootLayoutProps) {
   return (
-    <html lang={locale} suppressHydrationWarning>
+    <html lang={locale} className='overflow-hidden' suppressHydrationWarning>
       <body
-        className={`${mplus.variable} font-sans antialiased w-screen h-screen bg-white dark:bg-gray-800`}
+        className={`${mplus.variable} font-sans rotate-0.03 antialiased w-screen h-screen bg-white dark:bg-gray-800 overflow-hidden`}
       >
-        <Toaster position='top-center' toastOptions={{ unstyled: true }} />
-        <ThemeProvider defaultTheme='system' storageKey='ambient.dark' attribute='class'>
+        <Provider>
+          <Toaster position='top-center' toastOptions={{ unstyled: true }} />
           {children}
-        </ThemeProvider>
+        </Provider>
       </body>
     </html>
   );

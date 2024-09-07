@@ -11,6 +11,9 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      screens: {
+        desktop: '1282px',
+      },
       animation: {
         marquee: 'marquee var(--duration) linear infinite',
       },
@@ -37,6 +40,9 @@ const config: Config = {
           'Segoe UI Symbol',
           'Noto Color Emoji',
         ],
+      },
+      rotate: {
+        '0.03': '0.03deg',
       },
       transitionDelay: {
         2000: '2000ms',

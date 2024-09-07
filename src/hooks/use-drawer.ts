@@ -1,14 +1,16 @@
-import { useContext } from 'react';
-import { DrawerPlaylistContext, DrawerSettingsContext } from '@/providers/drawer';
+'use client';
+
+import { useAtom } from 'jotai';
+import { playlistDrawerAtom, settingDrawerAtom } from '@/atoms/drawer';
 
 export default function useDrawer() {
-  const { isPlaylistOpen, setPlaylistOpen } = useContext(DrawerPlaylistContext);
-  const { isSettingsOpen, setSettingsOpen } = useContext(DrawerSettingsContext);
+  const [settingsDrawerState, setSettingsDrawerState] = useAtom(settingDrawerAtom);
+  const [playlistDrawerState, setPlaylistDrawerState] = useAtom(playlistDrawerAtom);
 
   return {
-    isPlaylistOpen,
-    setPlaylistOpen,
-    isSettingsOpen,
-    setSettingsOpen,
+    settingsDrawerState,
+    setSettingsDrawerState,
+    playlistDrawerState,
+    setPlaylistDrawerState,
   };
 }

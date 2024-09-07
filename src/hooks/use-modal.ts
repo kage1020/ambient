@@ -1,11 +1,13 @@
-import { useContext } from 'react';
-import { ModalContext } from '@/providers/modal';
+'use client';
+
+import { useAtom } from 'jotai';
+import { modalAtom } from '@/atoms/modal';
 
 export default function useModal() {
-  const { isModalOpen, setModalOpen } = useContext(ModalContext);
+  const [modalState, setModalState] = useAtom(modalAtom);
 
   return {
-    isModalOpen,
-    setModalOpen,
+    modalState,
+    setModalState,
   };
 }
