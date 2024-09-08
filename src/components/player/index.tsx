@@ -17,6 +17,7 @@ export default async function Player() {
     searchParams.p,
     searchParams.c,
     searchParams.m,
+    searchParams.s,
     !!searchParams.f
   );
   const caption =

@@ -24,7 +24,9 @@ export async function generateMetadata({
   const { mediaIndex, mediaList } = await getMediaData(
     searchParams.p,
     searchParams.c,
-    searchParams.m
+    searchParams.m,
+    searchParams.s,
+    !!searchParams.f
   );
   return {
     title: mediaIndex

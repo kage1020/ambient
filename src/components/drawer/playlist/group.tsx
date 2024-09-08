@@ -14,6 +14,7 @@ export default async function PlaylistGroup() {
     searchParams.p,
     searchParams.c,
     searchParams.m,
+    searchParams.s,
     !!searchParams.f
   );
 

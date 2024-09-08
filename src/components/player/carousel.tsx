@@ -16,6 +16,7 @@ export default async function Carousel() {
     searchParams.p,
     searchParams.c,
     searchParams.m,
+    searchParams.s,
     !!searchParams.f
   );
 

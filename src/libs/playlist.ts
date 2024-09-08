@@ -58,13 +58,14 @@ export async function getMediaData(
   playlistName?: string,
   categoryName?: string,
   mediaIndex?: string,
+  seed?: string,
   shuffle?: boolean
 ) {
   const playlist = await loadPlaylistFile(playlistName);
   const cName =
     playlist && (await validateCategory(playlist, categoryName)) ? categoryName : undefined;
   const mediaList = playlist && cName ? await getMediaListByPlaylist(playlist, cName) : [];
-  const shuffledList = shuffle ? shuffleMedia(mediaList) : mediaList;
+  const shuffledList = shuffle ? shuffleMedia(mediaList, seed ? parseInt(seed) : 0) : mediaList;
   const items = shuffle ? shuffledList : mediaList;
 
   return {

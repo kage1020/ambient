@@ -5,7 +5,6 @@ import { Provider as JotaiProvider } from 'jotai';
 import { ThemeProvider, useTheme } from 'next-themes';
 import { defaultOption } from '@/const';
 import usePlayer from '@/hooks/use-player';
-import { shuffleMedia } from '@/libs/utils';
 import { Media, Playlist } from '@/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 

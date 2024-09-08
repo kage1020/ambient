@@ -18,7 +18,8 @@ export default function LanguageSelect({ t, locale, languages }: LanguageSelectP
   const searchParams = useSearchParams();
 
   const changeLocale = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    router.push(`/${e.target.value}?${searchParams.toString()}`);
+    const params = searchParams ?? new URLSearchParams();
+    router.push(`/${e.target.value}?${params.toString()}`);
   };
 
   return (

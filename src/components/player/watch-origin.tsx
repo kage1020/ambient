@@ -17,6 +17,7 @@ export default async function WatchOrigin({ url }: WatchOriginProps) {
     searchParams.p,
     searchParams.c,
     searchParams.m,
+    searchParams.s,
     !!searchParams.f
   );
 
