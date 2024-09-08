@@ -27,7 +27,7 @@ export function JotaiHydrator({
   seed,
   children,
 }: JotaiHydratorProps) {
-  const { theme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { setPlaylistState } = usePlayer();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -42,11 +42,12 @@ export function JotaiHydrator({
       options: {
         ...defaultOption,
         ...playlist?.options,
-        ...JSON.parse(localOptions ?? '{}'),
+        ...JSON.parse((searchParams.get('p') && localOptions) || '{}'),
         dark: theme === 'dark',
       },
     };
     setPlaylistState(newState);
+    setTheme(newState.options.dark ? 'dark' : 'light');
     if (newState.options.shuffle && !searchParams.get('f')) {
       const newParams = new URLSearchParams(searchParams);
       newParams.set('f', 'true');
@@ -62,6 +63,7 @@ export function JotaiHydrator({
     searchParams,
     seed,
     setPlaylistState,
+    setTheme,
     theme,
   ]);
 

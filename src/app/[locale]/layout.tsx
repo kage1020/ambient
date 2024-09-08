@@ -26,7 +26,7 @@ export default async function RootLayout({ params: { locale }, children }: RootL
   return (
     <html lang={locale} className='overflow-hidden' suppressHydrationWarning>
       <body
-        className={`${mplus.variable} font-sans rotate-0.03 antialiased w-screen h-screen bg-white dark:bg-gray-800 overflow-hidden`}
+        className={`${mplus.variable} font-sans rotate-0.03 antialiased w-screen h-screen bg-white dark:bg-gray-800 overflow-hidden transition-all`}
       >
         <Provider>
           <Toaster position='top-center' toastOptions={{ unstyled: true }} />
