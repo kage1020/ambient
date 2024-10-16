@@ -27,3 +27,13 @@ export function shuffleMedia(mediaList: Media[], seed?: number): Media[] {
     .sort((a, b) => a.r - b.r)
     .map((m) => ({ ...m, r: undefined }));
 }
+
+export function scrollIntoView(element: HTMLElement | null) {
+  if (!element) return;
+
+  const rect = element.getBoundingClientRect();
+  element.parentElement?.scrollTo({
+    top: element.offsetTop - (window.innerHeight - rect.height) / 2,
+    behavior: 'smooth',
+  });
+}

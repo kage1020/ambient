@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import usePlayer from '@/hooks/use-player';
 import { cn } from '@/libs/tw';
+import { scrollIntoView } from '@/libs/utils';
 
 type PlaylistGroupItemProps = {
   children: React.ReactNode;
@@ -21,13 +22,13 @@ export default function PlaylistGroupItem({
   const handlePlay = (e: React.MouseEvent<HTMLButtonElement>, index: number) => {
     e.preventDefault();
     e.stopPropagation();
-    itemRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    scrollIntoView(itemRef.current);
     playAt(index);
   };
 
   useEffect(() => {
     if (index === stateIndex) {
-      itemRef.current?.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      scrollIntoView(itemRef.current);
     }
   }, [index, itemRef, stateIndex]);
 
