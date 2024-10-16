@@ -9,8 +9,6 @@ Ambient is a media player that runs on a web browser using YouTube IFrame Player
 Ambient lets you create mixed playlists of your favorite YouTube videos and other media you own on your local PC, and play them seamlessly.<br>
 **Let's start your ambient media experience!**
 
-This project is a fork of [ka215/ambient](https://github.com/ka215/ambient) and has been modified to run on Next.js.
-
 <p align="center">
   <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/kage1020/ambient">
   <img alt="GitHub" src="https://img.shields.io/github/license/kage1020/ambient">
@@ -28,6 +26,9 @@ This project is a fork of [ka215/ambient](https://github.com/ka215/ambient) and 
   <a href="#finally">Finally</a> &middot;
   <a href="#acknowledgments">Acknowledgments</a>
 </p>
+
+> [!NOTE]
+> This project is a fork of [ka215/ambient](https://github.com/ka215/ambient) and has been modified to run on Next.js.
 
 ## Introduction
 
@@ -180,9 +181,10 @@ If there are no changes to the default values for the "options" property, it can
 
 ## Media Assets
 
-If all the media set in the playlist is from YouTube, you can skip this phase.
+> [!CAUTION]
+> **This project does not support local media play feature now.**
 
-**This project does not support local media play feature now.**
+If all the media set in the playlist is from YouTube, you can skip this phase.
 
 If you intend to play local PC media, you need to place the playback media and image files in the Ambient asset directory. The process for installing asset files is as follows:
 
@@ -238,7 +240,8 @@ Once the playlist is loaded, the play button in the bottom menu becomes active, 
 
 ## Compatibility
 
-**This project does not check the compatibility.**
+> [!CAUTION]
+> **This project does not check the compatibility.**
 
 As of October 20, 2023, the compatibility status for browsers and media file playback is as follows:
 

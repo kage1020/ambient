@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import PlaylistDrawer from '@/components/drawer/playlist';
 import SettingDrawer from '@/components/drawer/setting';
 import Menu from '@/components/menu';
@@ -6,7 +7,6 @@ import Player from '@/components/player';
 import { JotaiHydrator } from '@/components/provider';
 import { getTranslation } from '@/libs/locale';
 import { getMediaData } from '@/libs/playlist';
-import { Metadata } from 'next';
 import { SearchParams } from '@/types';
 
 type HomeProps = {
@@ -35,7 +35,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function Home({ params: { locale }, searchParams }: HomeProps) {
+export default async function Home({ searchParams }: HomeProps) {
   const { playlistName, categoryName, mediaIndex, playlist, mediaList } = await getMediaData(
     searchParams.p,
     searchParams.c,
