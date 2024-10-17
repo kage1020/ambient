@@ -37,3 +37,14 @@ export function scrollIntoView(element: HTMLElement | null) {
     behavior: 'smooth',
   });
 }
+
+export function debounce<T extends (...args: any[]) => any>(fn: T, delay = 300) {
+  let timer: NodeJS.Timeout | null = null;
+  return (...args: Parameters<T>) => {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = null;
+      return fn(...args);
+    }, delay);
+  };
+}

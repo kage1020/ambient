@@ -29,7 +29,7 @@ export default function PlayButton({ t }: PlayButtonProps) {
           playerState.playing && 'hidden'
         )}
         onClick={handlePlay}
-        disabled={playerState.playing || playlistState.index === -1 || playerState.pending}
+        disabled={playerState.playing || playlistState.index === -1}
       >
         <Play className='w-4 h-4 text-white' />
         <span className='sr-only'>{t['Play']}</span>

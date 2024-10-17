@@ -1,19 +1,21 @@
-import { atom } from 'jotai';
-import { defaultOption } from '@/const';
-import { Media, PlaylistOption } from '@/types';
+import { atomWithStorage } from 'jotai/utils';
+import { Media } from '@/types';
 
 type PlaylistAtomType = {
   name: string;
   category: string;
   index: number;
   items: Media[];
-  options: PlaylistOption;
 };
 
-export const playlistAtom = atom<PlaylistAtomType>({
-  name: '',
-  category: '',
-  index: -1,
-  items: [],
-  options: defaultOption,
-});
+export const playlistAtom = atomWithStorage<PlaylistAtomType>(
+  'ambient.playlist',
+  {
+    name: '',
+    category: '',
+    index: -1,
+    items: [],
+  },
+  undefined,
+  { getOnInit: true }
+);

@@ -1,12 +1,15 @@
 'use client';
 
 import { useEffect } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Provider as JotaiProvider } from 'jotai';
+import { useHydrateAtoms } from 'jotai/utils';
 import { ThemeProvider, useTheme } from 'next-themes';
+import { playerAtom } from '@/atoms/player';
+import { playlistAtom } from '@/atoms/playlist';
 import { defaultOption } from '@/const';
 import usePlayer from '@/hooks/use-player';
 import { Media, Playlist } from '@/types';
-import { useRouter, useSearchParams } from 'next/navigation';
 
 type JotaiHydratorProps = {
   playlistName?: string;
@@ -28,27 +31,37 @@ export function JotaiHydrator({
   children,
 }: JotaiHydratorProps) {
   const { theme, setTheme } = useTheme();
-  const { setPlaylistState } = usePlayer();
+  const { setPlaylistState, setPlayerState } = usePlayer();
   const router = useRouter();
   const searchParams = useSearchParams();
+  useHydrateAtoms([
+    [
+      playerAtom,
+      {
+        playing: false,
+        duration: 0,
+        volume: 1,
+        options: { ...defaultOption, ...playlist?.options, dark: theme === 'dark' },
+      },
+    ],
+    [
+      playlistAtom,
+      {
+        name: playlistName ?? '',
+        category: categoryName ?? '',
+        index: mediaIndex ?? -1,
+        items: mediaList,
+      },
+    ],
+  ]);
 
   useEffect(() => {
-    const localOptions = localStorage?.getItem('ambient.options');
-    const newState = {
-      name: playlistName ?? '',
-      category: categoryName ?? '',
-      index: mediaIndex ?? -1,
-      items: mediaList,
-      options: {
-        ...defaultOption,
-        ...playlist?.options,
-        ...JSON.parse((searchParams.get('p') && localOptions) || '{}'),
-        dark: theme === 'dark',
-      },
+    const newOptions = {
+      ...defaultOption,
+      ...playlist?.options,
+      dark: theme === 'dark',
     };
-    setPlaylistState(newState);
-    setTheme(newState.options.dark ? 'dark' : 'light');
-    if (newState.options.shuffle && !searchParams.get('f')) {
+    if (newOptions.shuffle && !searchParams.get('f')) {
       const newParams = new URLSearchParams(searchParams);
       newParams.set('f', 'true');
       router.push(`?${newParams.toString()}`);
@@ -62,6 +75,7 @@ export function JotaiHydrator({
     router,
     searchParams,
     seed,
+    setPlayerState,
     setPlaylistState,
     setTheme,
     theme,

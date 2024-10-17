@@ -45,11 +45,7 @@ export default function usePlayer() {
 
   const setOption = useCallback(
     (option: Partial<PlaylistOption>) => {
-      setPlaylistState({ ...playlistState, options: { ...playlistState.options, ...option } });
-      localStorage.setItem(
-        'ambient.options',
-        JSON.stringify({ ...playlistState.options, ...option })
-      );
+      setPlayerState({ ...playerState, options: { ...playerState.options, ...option } });
       if (option.dark !== undefined) {
         setTheme(option.dark ? 'dark' : 'light');
       }
@@ -60,7 +56,7 @@ export default function usePlayer() {
         router.push(`?${newParams.toString()}`);
       }
     },
-    [playlistState, router, searchParams, setPlaylistState, setTheme]
+    [playerState, router, searchParams, setPlayerState, setTheme]
   );
 
   const playAt = useCallback(
@@ -87,7 +83,7 @@ export default function usePlayer() {
   }, [playAt, playlistState.index, playlistState.items.length]);
 
   const playNext = useCallback(() => {
-    if (playlistState.options.random && playlistState.items.length > 1) {
+    if (playerState.options.random && playlistState.items.length > 1) {
       playRandom();
       return;
     }
@@ -98,11 +94,11 @@ export default function usePlayer() {
     playRandom,
     playlistState.index,
     playlistState.items.length,
-    playlistState.options.random,
+    playerState.options.random,
   ]);
 
   const playPrev = useCallback(() => {
-    if (playlistState.options.random && playlistState.items.length > 1) {
+    if (playerState.options.random && playlistState.items.length > 1) {
       playRandom();
       return;
     }
@@ -114,7 +110,7 @@ export default function usePlayer() {
     playRandom,
     playlistState.index,
     playlistState.items.length,
-    playlistState.options.random,
+    playerState.options.random,
   ]);
 
   const play = useCallback(() => {

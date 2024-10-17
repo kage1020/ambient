@@ -1,8 +1,7 @@
 import 'server-only';
 import fs from 'node:fs/promises';
-import { LanguageTranslation } from '@/types';
 import { headers } from 'next/headers';
-import {} from 'next/navigation';
+import { LanguageTranslation } from '@/types';
 
 export async function loadLanguageFiles() {
   const files = (await fs.readdir(process.cwd() + '/public/languages')).filter(

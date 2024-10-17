@@ -29,7 +29,7 @@ export default function PauseButton({ t }: PauseButtonProps) {
           !playerState.playing && 'hidden'
         )}
         onClick={handlePause}
-        disabled={!playerState.playing || playlistState.index === -1 || playerState.pending}
+        disabled={!playerState.playing || playlistState.index === -1}
       >
         <Pause className='w-4 h-4 text-white' />
         <span className='sr-only'>{t['Pause']}</span>

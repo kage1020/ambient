@@ -11,7 +11,7 @@ type SeekToggleProps = {
 };
 
 export default function SeekToggle({ t }: SeekToggleProps) {
-  const { playlistState, setOption } = usePlayer();
+  const { playerState, setOption } = usePlayer();
   const flags = getFlags();
 
   return (
@@ -25,9 +25,9 @@ export default function SeekToggle({ t }: SeekToggleProps) {
       >
         <input
           type='checkbox'
-          checked={playlistState.options.seek}
+          checked={playerState.options.seek && false}
           className='sr-only peer'
-          onChange={() => setOption({ seek: !playlistState.options.seek })}
+          onChange={() => setOption({ seek: !playerState.options.seek })}
           disabled={!flags.seek} // TODO: Implement this feature
         />
         <div className="w-11 h-6 bg-gray-200 rounded-full peer peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600"></div>

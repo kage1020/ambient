@@ -17,13 +17,13 @@ export default function VideoPlayer({ t, url }: VideoPlayerProps) {
   const [mounted, setMounted] = useState(false);
 
   const onReady = () => {
-    const isAutoplay = playlistState.options.autoplay ?? false;
+    const isAutoplay = playerState.options.autoplay ?? false;
     const isPlaylistReady = playlistState.items.length > 0;
     if (isAutoplay && isPlaylistReady) play();
   };
 
   const onEnded = () => {
-    if (playlistState.options.loop) playAt(playlistState.index);
+    if (playerState.options.loop) playAt(playlistState.index);
     else playNext();
   };
 
@@ -51,7 +51,7 @@ export default function VideoPlayer({ t, url }: VideoPlayerProps) {
           config={{
             youtube: {
               playerVars: {
-                autoplay: playlistState.options.autoplay ? 1 : 0,
+                autoplay: playerState.options.autoplay ? 1 : 0,
                 controls: 1,
                 fs: 0,
                 cc_load_policy: 0,
@@ -59,6 +59,7 @@ export default function VideoPlayer({ t, url }: VideoPlayerProps) {
               },
             },
           }}
+          volume={playerState.volume}
           onReady={onReady}
           onEnded={onEnded}
           onError={onError}
