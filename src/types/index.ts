@@ -26,6 +26,7 @@ export type LanguageTranslation = {
   'Seek and play': string;
   'Default volume:': string;
   'Pseudo fader': string;
+  Fullscreen: string;
   'Dark mode': string;
   Language: string;
   Default: string;

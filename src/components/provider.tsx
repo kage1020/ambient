@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { createContext, MutableRefObject, useEffect, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import ReactPlayer from 'react-player';
 import { Provider as JotaiProvider } from 'jotai';
 import { useHydrateAtoms } from 'jotai/utils';
 import { ThemeProvider, useTheme } from 'next-themes';
@@ -10,6 +11,8 @@ import { playlistAtom } from '@/atoms/playlist';
 import { defaultOption } from '@/const';
 import usePlayer from '@/hooks/use-player';
 import { Media, Playlist } from '@/types';
+
+export const PlayerRefContext = createContext<MutableRefObject<ReactPlayer | null> | null>(null);
 
 type JotaiHydratorProps = {
   playlistName?: string;
@@ -31,9 +34,6 @@ export function JotaiHydrator({
   children,
 }: JotaiHydratorProps) {
   const { theme, setTheme } = useTheme();
-  const { setPlaylistState, setPlayerState } = usePlayer();
-  const router = useRouter();
-  const searchParams = useSearchParams();
   useHydrateAtoms([
     [
       playerAtom,
@@ -54,6 +54,9 @@ export function JotaiHydrator({
       },
     ],
   ]);
+  const { setPlaylistState, setPlayerState } = usePlayer();
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const newOptions = {
@@ -89,10 +92,12 @@ type ProviderProps = {
 };
 
 export default function Provider({ children }: ProviderProps) {
+  const playerRef = useRef<ReactPlayer | null>(null);
+
   return (
     <JotaiProvider>
       <ThemeProvider defaultTheme='system' storageKey='ambient.theme' attribute='class'>
-        {children}
+        <PlayerRefContext.Provider value={playerRef}>{children}</PlayerRefContext.Provider>
       </ThemeProvider>
     </JotaiProvider>
   );

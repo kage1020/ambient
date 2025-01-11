@@ -39,7 +39,8 @@ export default async function Home({ searchParams }: HomeProps) {
   const { playlistName, categoryName, mediaIndex, playlist, mediaList } = await getMediaData(
     searchParams.p,
     searchParams.c,
-    searchParams.m
+    searchParams.m,
+    searchParams.f
   );
 
   return (

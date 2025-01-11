@@ -1,11 +1,12 @@
 'use client';
 
-import { useCallback, useRef, useTransition } from 'react';
+import { useCallback, useContext, useRef, useTransition } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAtom } from 'jotai';
 import { useTheme } from 'next-themes';
 import { playerAtom } from '@/atoms/player';
 import { playlistAtom } from '@/atoms/playlist';
+import { PlayerRefContext } from '@/components/provider';
 import { PlaylistOption } from '@/types';
 
 export default function usePlayer() {
@@ -16,6 +17,7 @@ export default function usePlayer() {
   const { setTheme } = useTheme();
   const [pending, startTransition] = useTransition();
   const itemRef = useRef<HTMLButtonElement | null>(null);
+  const playerRef = useContext(PlayerRefContext);
 
   const selectPlaylist = useCallback(
     (playlistName: string) => {
@@ -45,16 +47,18 @@ export default function usePlayer() {
 
   const setOption = useCallback(
     (option: Partial<PlaylistOption>) => {
-      setPlayerState({ ...playerState, options: { ...playerState.options, ...option } });
-      if (option.dark !== undefined) {
-        setTheme(option.dark ? 'dark' : 'light');
-      }
-      if (option.shuffle !== undefined) {
-        const newParams = new URLSearchParams(searchParams.toString());
-        if (option.shuffle) newParams.set('f', 'true');
-        else newParams.delete('f');
-        router.push(`?${newParams.toString()}`);
-      }
+      startTransition(() => {
+        setPlayerState({ ...playerState, options: { ...playerState.options, ...option } });
+        if (option.dark !== undefined) {
+          setTheme(option.dark ? 'dark' : 'light');
+        }
+        if (option.shuffle !== undefined) {
+          const newParams = new URLSearchParams(searchParams.toString());
+          if (option.shuffle) newParams.set('f', 'true');
+          else newParams.set('f', 'false');
+          router.push(`?${newParams.toString()}`);
+        }
+      });
     },
     [playerState, router, searchParams, setPlayerState, setTheme]
   );
@@ -123,8 +127,14 @@ export default function usePlayer() {
     setPlayerState({ ...playerState, playing: false });
   }, [playerState, setPlayerState]);
 
+  const toggleFullscreen = useCallback(() => {
+    if (playerState.options.fs) document.exitFullscreen();
+    else playerRef?.current?.getInternalPlayer().g.requestFullscreen();
+  }, [playerRef, playerState.options.fs]);
+
   return {
     itemRef,
+    playerRef,
     pending,
     playerState,
     setPlayerState,
@@ -138,5 +148,6 @@ export default function usePlayer() {
     playPrev,
     play,
     pause,
+    toggleFullscreen,
   };
 }

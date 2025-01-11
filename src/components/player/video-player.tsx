@@ -13,7 +13,8 @@ type VideoPlayerProps = {
 };
 
 export default function VideoPlayer({ t, url }: VideoPlayerProps) {
-  const { playerState, playlistState, play, playAt, playNext, pause } = usePlayer();
+  const { playerRef, playerState, playlistState, setPlayerState, play, playAt, playNext, pause } =
+    usePlayer();
   const [mounted, setMounted] = useState(false);
 
   const onReady = () => {
@@ -46,6 +47,7 @@ export default function VideoPlayer({ t, url }: VideoPlayerProps) {
     >
       {mounted && url !== '#' && (
         <ReactPlayer
+          ref={playerRef}
           url={url}
           playing={playerState.playing}
           config={{

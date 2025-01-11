@@ -13,6 +13,7 @@ import VolumeSlider from './volume-slider';
 import FaderToggle from './fader-toggle';
 import DarkModeToggle from './dark-mode-toggle';
 import LanguageSelect from './language-select';
+import FullscreenToggle from './fullscreen-button';
 
 export default async function SettingsDrawer() {
   const locale = await getLocale();
@@ -56,6 +57,7 @@ export default async function SettingsDrawer() {
         <VolumeSlider t={t} />
         <FaderToggle t={t} />
         <DarkModeToggle t={t} />
+        <FullscreenToggle t={t} />
         <LanguageSelect
           t={t}
           locale={locale}
