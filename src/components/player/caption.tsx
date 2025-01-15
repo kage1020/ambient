@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useState } from 'react';
 import useMediaQuery from '@/hooks/use-media-query';
 import { cn } from '@/libs/tw';
 
@@ -9,30 +9,27 @@ type MediaCaptionProps = {
 };
 
 export default function MediaCaption({ caption }: MediaCaptionProps) {
-  const marqueeRef = useRef<HTMLDivElement>(null);
   const { windowSize } = useMediaQuery();
+  const [marqueeWidth, setMarqueeWidth] = useState(0);
 
   return (
     <figcaption className='text-gray-900 text-lg font-normal dark:text-white max-w-full flex justify-center items-center gap-2 mb-2 whitespace-nowrap overflow-hidden w-[inherit] desktop:max-w-[640px]'>
       {Array.from({
-        length:
-          (marqueeRef.current?.clientWidth || 0) > windowSize.width ||
-          (marqueeRef.current?.clientWidth || 0) > 640
-            ? 5
-            : 1,
+        length: marqueeWidth > windowSize.width || marqueeWidth > 640 ? 5 : 1,
       }).map((_, i) => (
         <div
           key={i}
-          ref={i === 0 ? marqueeRef : null}
+          ref={(el) => {
+            if (i === 0 && el) setMarqueeWidth(el.clientWidth);
+          }}
           className={cn(
-            (marqueeRef.current?.clientWidth || 0) > windowSize.width ||
-              (marqueeRef.current?.clientWidth || 0) > 640
+            marqueeWidth > windowSize.width || marqueeWidth > 640
               ? 'animate-marquee flex-shrink-0'
               : ''
           )}
           style={
             {
-              '--duration': Math.floor((marqueeRef.current?.clientWidth || 0) / 32) + 's',
+              '--duration': Math.floor(marqueeWidth / 32) + 's',
             } as React.CSSProperties
           }
           dangerouslySetInnerHTML={{
