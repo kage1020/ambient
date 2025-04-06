@@ -24,6 +24,7 @@ export async function generateMetadata({ params }: ParamsProps): Promise<Metadat
   const t = await getTranslation(locale);
 
   return {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:8765'),
     title: t['Ambient Media Player'],
     description:
       t['Ambient is a media player that runs on a web browser using YouTube IFrame Player API.'],
