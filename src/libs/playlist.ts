@@ -43,9 +43,9 @@ export async function getPlaylistFileNames(url?: string) {
   if (!isLocal) return ['mememori-youtube.json', 'mili.json'];
 
   const fs = await import('node:fs/promises');
-  const localFiles = (await fs.readdir(process.cwd() + '/public/playlists')).filter((file) =>
-    file.endsWith('.json')
-  );
+  const localFiles = (
+    await fs.readdir(`${process.cwd()}${isLocal ? '/public' : ''}/playlists/`)
+  ).filter((file) => file.endsWith('.json'));
 
   if (!url) return localFiles;
 
@@ -59,7 +59,10 @@ export async function getPlaylist(nameOrUrl: string) {
   }
 
   const fs = await import('node:fs/promises');
-  const content = await fs.readFile(process.cwd() + '/public/playlists/' + nameOrUrl, 'utf-8');
+  const content = await fs.readFile(
+    `${process.cwd()}${isLocal ? '/public' : ''}/playlists/${nameOrUrl}`,
+    'utf-8'
+  );
   return JSON.parse(content) as Playlist;
 }
 
