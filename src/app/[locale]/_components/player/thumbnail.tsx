@@ -3,7 +3,7 @@
 import Image from 'next/image';
 import type { Media } from '@/libs/playlist';
 import { getYoutubeThumbnailURL } from '@/libs/format';
-import noImage from '../../../../../public/images/ambient-placeholder.svg';
+import noImage from '../../../../../assets/images/ambient-placeholder.svg';
 
 type ThumbnailProps = {
   media: Media | null;

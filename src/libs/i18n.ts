@@ -1,7 +1,7 @@
 import 'server-only';
 
-import en from '../../public/languages/lang-en.json';
-import ja from '../../public/languages/lang-ja.json';
+import en from '../../assets/languages/lang-en.json';
+import ja from '../../assets/languages/lang-ja.json';
 import { headers } from 'next/headers';
 
 export type Translation = typeof en;
@@ -13,7 +13,7 @@ export async function getLanguageFileNames() {
   if (!isLocal) return ['lang-en.json', 'lang-ja.json'];
 
   const fs = await import('node:fs/promises');
-  const files = await fs.readdir(`${process.cwd()}/public/languages`);
+  const files = await fs.readdir(`${process.cwd()}/assets/languages`);
   return files.filter((file) => file.endsWith('.json') && file.includes('-'));
 }
 
@@ -37,6 +37,6 @@ export async function getTranslation(locale?: string): Promise<Translation> {
   if (!file) return en;
 
   const fs = await import('node:fs/promises');
-  const content = await fs.readFile(`${process.cwd()}/public/languages/${file}`, 'utf-8');
+  const content = await fs.readFile(`${process.cwd()}/assets/languages/${file}`, 'utf-8');
   return JSON.parse(content) as Translation;
 }

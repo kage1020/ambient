@@ -26,6 +26,7 @@
     "shuffle": true,
     "dark": true,
     "caption": "%artist% - %title%",
-    "playlist": "%artist% - %title%"
+    "playlist": "%artist% - %title%",
+    "fs": true
   }
 }

@@ -1,6 +1,6 @@
 <h1 align="center">
   <div align="center">
-    <img src="./public/images/ambient-logo-color.svg" width="64" align="center" />
+    <img src="./assets/images/ambient-logo-color.svg" width="64" align="center" />
   </div>
   Ambient with Next.js
 </h1>

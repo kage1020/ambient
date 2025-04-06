@@ -7,7 +7,7 @@ import { cn } from '@/libs/tw';
 import { PlaylistDrawer as Drawer, DrawerHeader } from '..';
 import { Playlist as PlaylistIcon, Close as CloseIcon } from '../../icons';
 import { MediaItem } from './media-item';
-import noMedia from '../../../../../../public/images/no-media-placeholder.svg';
+import noMedia from '../../../../../../assets/images/no-media-placeholder.svg';
 
 type PlaylistDrawerProps = {
   mediaList: Media[];
