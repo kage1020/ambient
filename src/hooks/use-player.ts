@@ -86,6 +86,8 @@ export function usePlayer() {
           JSON.stringify([...new Set([...storedPlaylists, name]).values()])
         );
         newSearchParams.set('playlist', name);
+      } else {
+        newSearchParams.set('playlist', name);
       }
       newSearchParams.set('shuffle', 'false');
       newSearchParams.delete('category');
