@@ -15,7 +15,11 @@ const mplus = localFont({
   variable: '--font-mplus',
 });
 
-export async function generateMetadata({ params }: PageParams): Promise<Metadata> {
+type ParamsProps = {
+  params: PageParams['params'];
+};
+
+export async function generateMetadata({ params }: ParamsProps): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslation(locale);
 
@@ -26,7 +30,7 @@ export async function generateMetadata({ params }: PageParams): Promise<Metadata
   };
 }
 
-type AppLayoutProps = PageParams & {
+type AppLayoutProps = ParamsProps & {
   children: React.ReactNode;
 };
 
