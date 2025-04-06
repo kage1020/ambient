@@ -40,7 +40,7 @@ export type PlaylistOption = {
 export type Playlist = Record<string, Media[]> & { options: PlaylistOption };
 
 export async function getPlaylistFileNames(url?: string) {
-  if (!isLocal) return ['mememori-youtube.json', 'mili.json'];
+  if (!isLocal) return []; // In vercel, we don't have access to the file system
 
   const fs = await import('node:fs/promises');
   const localFiles = (
