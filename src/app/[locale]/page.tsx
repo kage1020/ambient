@@ -1,62 +1,33 @@
-import { Metadata } from 'next';
-import PlaylistDrawer from '@/components/drawer/playlist';
-import SettingDrawer from '@/components/drawer/setting';
-import Menu from '@/components/menu';
-import OptionModal from '@/components/modal';
-import Player from '@/components/player';
-import { JotaiHydrator } from '@/components/provider';
-import { getTranslation } from '@/libs/locale';
-import { getMediaData } from '@/libs/playlist';
-import { SearchParams } from '@/types';
+import { type PageParams, parsePageParams } from '@/libs/params';
+import { getMediaList, getPlaylist } from '@/libs/playlist';
+import { Menu } from './_components/menu';
+import { Player } from './_components/player';
+import { PlaylistDrawer } from './_components/drawer/playlist';
+import { SettingsDrawer } from './_components/drawer/settings';
+import { OptionModal } from './_components/modal';
 
-type HomeProps = {
-  params: {
-    locale: string;
-  };
-  searchParams: SearchParams;
-};
+export default async function Home({ searchParams }: PageParams) {
+  const { parsedSearchParams } = await parsePageParams({ searchParams });
 
-export async function generateMetadata({
-  params: { locale },
-  searchParams,
-}: HomeProps): Promise<Metadata> {
-  const t = await getTranslation(locale);
-  const { mediaIndex, mediaList } = await getMediaData(
-    searchParams.p,
-    searchParams.c,
-    searchParams.m,
-    searchParams.s,
-    !!searchParams.f
-  );
-  return {
-    title: mediaIndex
-      ? `${mediaList[mediaIndex]?.title} - ${t['Ambient Media Player']}`
-      : t['Ambient Media Player'],
-  };
-}
-
-export default async function Home({ searchParams }: HomeProps) {
-  const { playlistName, categoryName, mediaIndex, playlist, mediaList } = await getMediaData(
-    searchParams.p,
-    searchParams.c,
-    searchParams.m,
-    searchParams.f
-  );
+  const playlist = parsedSearchParams.playlist
+    ? await getPlaylist(parsedSearchParams.playlist)
+    : null;
+  const mediaList = playlist
+    ? await getMediaList(
+        playlist,
+        parsedSearchParams.category,
+        parsedSearchParams.shuffle,
+        parsedSearchParams.seed
+      )
+    : [];
 
   return (
-    <JotaiHydrator
-      playlistName={playlistName}
-      categoryName={categoryName}
-      mediaIndex={mediaIndex}
-      playlist={playlist}
-      mediaList={mediaList}
-      seed={searchParams.s}
-    >
-      <Player />
-      <Menu />
-      <PlaylistDrawer />
-      <SettingDrawer />
+    <>
+      <Player playlist={playlist} mediaList={mediaList} />
+      <Menu playlist={playlist} mediaList={mediaList} />
+      <PlaylistDrawer mediaList={mediaList} />
+      <SettingsDrawer />
       <OptionModal />
-    </JotaiHydrator>
+    </>
   );
 }

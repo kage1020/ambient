@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 @layer base {
   ::-webkit-scrollbar {
     @apply w-2 h-2;
@@ -10,9 +14,11 @@
   }
 }
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Flowbite React Alert */
+div[data-testid='flowbite-alert-wrapper'] + div {
+  display: grid;
+  place-items: center;
+}
 
 .text--artist,
 .text--title,

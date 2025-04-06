@@ -1,153 +1,113 @@
 'use client';
 
-import { useCallback, useContext, useRef, useTransition } from 'react';
+import { createContext, useCallback, useContext } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useAtom } from 'jotai';
-import { useTheme } from 'next-themes';
-import { playerAtom } from '@/atoms/player';
-import { playlistAtom } from '@/atoms/playlist';
-import { PlayerRefContext } from '@/components/provider';
-import { PlaylistOption } from '@/types';
+import type ReactPlayer from 'react-player';
+import { defaultPlaylistOption } from '@/libs/const';
+import type { PlaylistOption } from '@/libs/playlist';
+import { Random } from '@/libs/random';
 
-export default function usePlayer() {
-  const [playerState, setPlayerState] = useAtom(playerAtom);
-  const [playlistState, setPlaylistState] = useAtom(playlistAtom);
-  const searchParams = useSearchParams();
+type PlayerContextType = {
+  playerRef: React.RefObject<ReactPlayer | null> | null;
+  options: PlaylistOption;
+  playing: boolean;
+  remotePlaylists: string[];
+  display: 'normal' | 'expanded';
+  setOptions: (option: Partial<PlaylistOption>) => void;
+  setPlaying: (playing: boolean) => void;
+  setRemotePlaylists: (playlists: string[]) => void;
+  setDisplay: (display: 'normal' | 'expanded') => void;
+};
+
+export const PlayerContext = createContext<PlayerContextType>({
+  playerRef: null,
+  options: defaultPlaylistOption,
+  playing: false,
+  remotePlaylists: [],
+  display: 'normal',
+  setOptions: () => {},
+  setPlaying: () => {},
+  setRemotePlaylists: () => {},
+  setDisplay: () => {},
+});
+
+export function usePlayer() {
   const router = useRouter();
-  const { setTheme } = useTheme();
-  const [pending, startTransition] = useTransition();
-  const itemRef = useRef<HTMLButtonElement | null>(null);
-  const playerRef = useContext(PlayerRefContext);
+  const searchParams = useSearchParams();
 
-  const selectPlaylist = useCallback(
-    (playlistName: string) => {
-      startTransition(() => {
-        setPlaylistState({ ...playlistState, name: playlistName });
-        const newParams = new URLSearchParams(searchParams.toString());
-        newParams.set('p', playlistName);
-        newParams.delete('c');
-        newParams.delete('m');
-        router.push(`?${newParams.toString()}`);
-      });
-    },
-    [playlistState, router, searchParams, setPlaylistState]
-  );
-
-  const selectCategory = useCallback(
-    (categoryName: string) => {
-      startTransition(() => {
-        setPlaylistState({ ...playlistState, category: categoryName });
-        const newParams = new URLSearchParams(searchParams.toString());
-        newParams.set('c', categoryName);
-        router.push(`?${newParams.toString()}`);
-      });
-    },
-    [playlistState, router, searchParams, setPlaylistState]
-  );
-
-  const setOption = useCallback(
-    (option: Partial<PlaylistOption>) => {
-      startTransition(() => {
-        setPlayerState({ ...playerState, options: { ...playerState.options, ...option } });
-        if (option.dark !== undefined) {
-          setTheme(option.dark ? 'dark' : 'light');
-        }
-        if (option.shuffle !== undefined) {
-          const newParams = new URLSearchParams(searchParams.toString());
-          if (option.shuffle) newParams.set('f', 'true');
-          else newParams.set('f', 'false');
-          router.push(`?${newParams.toString()}`);
-        }
-      });
-    },
-    [playerState, router, searchParams, setPlayerState, setTheme]
-  );
+  const context = useContext(PlayerContext);
+  if (!context) {
+    throw new Error('usePlayer must be used within a PlayerProvider');
+  }
 
   const playAt = useCallback(
     (index: number) => {
-      startTransition(() => {
-        setPlaylistState({ ...playlistState, index });
-        setPlayerState({ ...playerState, playing: true });
-        const newParams = new URLSearchParams(searchParams.toString());
-        newParams.set('m', index.toString());
-        router.push(`?${newParams.toString()}`);
-      });
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.set('mediaIndex', index.toString());
+      router.push(`?${newSearchParams.toString()}`);
     },
-    [playerState, playlistState, router, searchParams, setPlayerState, setPlaylistState]
+    [router, searchParams]
   );
 
-  const playRandom = useCallback(() => {
-    while (true) {
-      const randomIndex = Math.floor(Math.random() * playlistState.items.length);
-      if (randomIndex !== playlistState.index) {
-        playAt(randomIndex);
-        break;
+  const playPrev = useCallback(
+    (currentIndex: number, mediaCount: number) => {
+      if (context.options.random) {
+        const random = new Random(Number.parseInt(searchParams.get('seed') ?? '42'));
+        playAt(random.next() % mediaCount);
+      } else {
+        playAt((currentIndex - 1 + mediaCount) % mediaCount);
       }
-    }
-  }, [playAt, playlistState.index, playlistState.items.length]);
+    },
+    [context.options.random, playAt, searchParams]
+  );
 
-  const playNext = useCallback(() => {
-    if (playerState.options.random && playlistState.items.length > 1) {
-      playRandom();
-      return;
-    }
-    const index = (playlistState.index + 1) % playlistState.items.length || 0;
-    playAt(index);
-  }, [
-    playAt,
-    playRandom,
-    playlistState.index,
-    playlistState.items.length,
-    playerState.options.random,
-  ]);
+  const playNext = useCallback(
+    (currentIndex: number, mediaCount: number) => {
+      if (context.options.random) {
+        const random = new Random(Number.parseInt(searchParams.get('seed') ?? '42'));
+        playAt(random.next() % mediaCount);
+      } else {
+        playAt((currentIndex + 1) % mediaCount);
+      }
+    },
+    [context.options.random, playAt, searchParams]
+  );
 
-  const playPrev = useCallback(() => {
-    if (playerState.options.random && playlistState.items.length > 1) {
-      playRandom();
-      return;
-    }
-    const index =
-      (playlistState.index - 1 + playlistState.items.length) % playlistState.items.length || 0;
-    playAt(index);
-  }, [
-    playAt,
-    playRandom,
-    playlistState.index,
-    playlistState.items.length,
-    playerState.options.random,
-  ]);
+  const selectPlaylist = useCallback(
+    (name: string) => {
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      if (name === '') {
+        newSearchParams.delete('playlist');
+      } else if (name.startsWith('http')) {
+        const storedPlaylistsString = localStorage.getItem('ambient.playlists') ?? '[]';
+        const storedPlaylists = JSON.parse(storedPlaylistsString) as string[];
+        localStorage.setItem(
+          'ambient.playlists',
+          JSON.stringify([...new Set([...storedPlaylists, name]).values()])
+        );
+        newSearchParams.set('playlist', name);
+      }
+      newSearchParams.set('shuffle', 'false');
+      newSearchParams.delete('category');
+      newSearchParams.delete('mediaIndex');
+      router.push(`?${newSearchParams.toString()}`);
+    },
+    [router, searchParams]
+  );
 
-  const play = useCallback(() => {
-    const mediaIndex = playlistState.index;
-    if (mediaIndex === -1) playAt(0);
-    else playAt(mediaIndex);
-  }, [playAt, playlistState.index]);
+  const selectCategory = useCallback(
+    (name: string) => {
+      const newSearchParams = new URLSearchParams(searchParams.toString());
+      newSearchParams.set('category', name);
+      newSearchParams.delete('mediaIndex');
+      router.push(`?${newSearchParams.toString()}`);
+    },
+    [router, searchParams]
+  );
 
-  const pause = useCallback(() => {
-    setPlayerState({ ...playerState, playing: false });
-  }, [playerState, setPlayerState]);
+  const setFullscreen = useCallback(() => {
+    context.playerRef?.current?.getInternalPlayer().g.requestFullscreen();
+  }, [context.playerRef]);
 
-  const toggleFullscreen = useCallback(() => {
-    if (playerState.options.fs) document.exitFullscreen();
-    else playerRef?.current?.getInternalPlayer().g.requestFullscreen();
-  }, [playerRef, playerState.options.fs]);
-
-  return {
-    itemRef,
-    playerRef,
-    pending,
-    playerState,
-    setPlayerState,
-    playlistState,
-    setPlaylistState,
-    selectPlaylist,
-    selectCategory,
-    setOption,
-    playAt,
-    playNext,
-    playPrev,
-    play,
-    pause,
-    toggleFullscreen,
-  };
+  return { ...context, playAt, playPrev, playNext, selectPlaylist, selectCategory, setFullscreen };
 }

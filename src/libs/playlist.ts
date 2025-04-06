@@ -1,81 +1,112 @@
 import 'server-only';
-import fs from 'node:fs/promises';
-import { allCategory } from '@/const';
-import { shuffleMedia } from '@/libs/utils';
-import { Media, MediaWithoutId, Playlist, PlaylistWithoutId } from '@/types';
+import { isLocal } from '@/libs/const';
+import { Random } from './random';
 
-export async function loadPlaylistFiles() {
-  const files = (await fs.readdir(process.cwd() + '/public/playlists')).filter((file) =>
+export type Media = {
+  mediaId: string;
+  title: string;
+  file?: string;
+  videoid?: string;
+  desc?: string;
+  artist?: string;
+  image?: string;
+  volume?: number;
+  start?: number;
+  end?: number;
+  fadein?: number;
+  fadeout?: number;
+  fs?: boolean; // fullscreen
+  cc?: boolean; // closed caption
+  [key: string]: string | number | boolean | undefined;
+};
+
+export type PlaylistOption = {
+  autoplay?: boolean;
+  controls?: boolean;
+  loop?: boolean;
+  random?: boolean;
+  shuffle?: boolean;
+  seek?: boolean;
+  volume?: number;
+  fader?: boolean;
+  dark?: boolean;
+  background?: string;
+  caption?: string;
+  playlist?: string;
+  fs?: boolean; // fullscreen
+  cc?: boolean; // closed caption
+};
+
+export type Playlist = Record<string, Media[]> & { options: PlaylistOption };
+
+export async function getPlaylistFileNames(url?: string) {
+  if (!isLocal) return ['mememori-youtube.json', 'mili.json'];
+
+  const fs = await import('node:fs/promises');
+  const localFiles = (await fs.readdir(process.cwd() + '/public/playlists')).filter((file) =>
     file.endsWith('.json')
   );
-  return files;
+
+  if (!url) return localFiles;
+
+  return [...localFiles, url.split('/').pop() ?? ''].filter((file) => file.endsWith('.json'));
 }
 
-export async function loadPlaylistFile(filename?: string) {
-  if (!filename) return null;
-
-  try {
-    const exists = (await fs.lstat(process.cwd() + '/public/playlists/' + filename)).isFile();
-    if (!exists) return null;
-    return JSON.parse(
-      await fs.readFile(process.cwd() + '/public/playlists/' + filename, 'utf-8')
-    ) as PlaylistWithoutId;
-  } catch (e) {
-    console.error('error');
-    return null;
+export async function getPlaylist(nameOrUrl: string) {
+  if (nameOrUrl.startsWith('http')) {
+    const res = await fetch(nameOrUrl);
+    return res.json() as Promise<Playlist>;
   }
+
+  const fs = await import('node:fs/promises');
+  const content = await fs.readFile(process.cwd() + '/public/playlists/' + nameOrUrl, 'utf-8');
+  return JSON.parse(content) as Playlist;
 }
 
-export async function addMediaId(mediaList: MediaWithoutId[]): Promise<Media[]> {
-  return mediaList.map((media) => ({ ...media, mediaId: media.videoid || media.title }));
+export async function getCategories(playlist: Playlist) {
+  return ['all', ...Object.keys(playlist).filter((key) => key !== 'options')];
 }
 
-export async function getCategoriesByPlaylist(playlist: Playlist) {
-  return Object.keys(playlist).filter((key) => key !== 'options');
-}
-
-export async function validateCategory(playlist: Playlist, categoryName?: string) {
-  if (!categoryName) return false;
-  return (await getCategoriesByPlaylist(playlist)).includes(categoryName);
-}
-
-export async function getMediaListByPlaylist(
-  playlist: PlaylistWithoutId | null,
-  category: string | typeof allCategory
+export async function getMediaList(
+  playlist: Playlist,
+  categoryName: string | null,
+  shuffle?: boolean,
+  seed?: number
 ) {
-  if (!playlist) return [];
-  if (category === allCategory) {
-    const items = Object.keys(playlist)
-      .filter((key) => key !== 'options')
-      .map((key) => playlist[key])
+  if (!categoryName || categoryName === 'all') {
+    const mediaItems = Object.values(playlist)
+      .filter((v) => Array.isArray(v))
       .flat();
-    return addMediaId(items);
+    const random = new Random(seed || 42);
+    return shuffle
+      ? (await shuffleMedia(mediaItems, seed)).map((m) => ({
+          ...m,
+          mediaId: random.next().toString(16),
+        }))
+      : mediaItems.map((m) => ({ ...m, mediaId: random.next().toString(16) }));
   }
-  return addMediaId(playlist[category]);
+
+  const categories = await getCategories(playlist);
+
+  const mediaItems = categories.includes(categoryName) ? playlist[categoryName] : [];
+  const random = new Random(seed || 42);
+  return shuffle
+    ? (await shuffleMedia(mediaItems, seed)).map((m) => ({
+        ...m,
+        mediaId: random.next().toString(16),
+      }))
+    : mediaItems.map((m) => ({ ...m, mediaId: random.next().toString(16) }));
 }
 
-export async function getMediaData(
-  playlistName?: string,
-  categoryName?: string,
-  mediaIndex?: string,
-  seed?: string,
-  shuffle?: boolean
-) {
-  const playlist = await loadPlaylistFile(playlistName);
-  const cName =
-    playlist && (await validateCategory(playlist, categoryName)) ? categoryName : undefined;
-  const mediaList = playlist && cName ? await getMediaListByPlaylist(playlist, cName) : [];
-  const shuffledList = shuffle ? shuffleMedia(mediaList, seed ? parseInt(seed) : 0) : mediaList;
-  const items = shuffle ? shuffledList : mediaList;
+export async function shuffleMedia(mediaItems: Media[], seed?: number) {
+  const random = new Random(seed || 42);
+  return mediaItems
+    .map((m) => ({ ...m, r: random.next() }))
+    .sort((a, b) => a.r - b.r)
+    .map((m) => ({ ...m, r: undefined })) as Media[];
+}
 
-  return {
-    playlistName: playlist && playlistName ? playlistName : undefined,
-    playlist,
-    playlists: await loadPlaylistFiles(),
-    categoryName: cName,
-    categories: playlist ? await getCategoriesByPlaylist(playlist) : [],
-    mediaList: items,
-    mediaIndex: mediaIndex ? parseInt(mediaIndex) : undefined,
-    currentMedia: mediaIndex ? items[parseInt(mediaIndex)] : null,
-  };
+export async function getMedia(mediaList: Media[], mediaIndex: number | null) {
+  if (mediaIndex === null) return null;
+  return mediaList.at(mediaIndex) || null;
 }

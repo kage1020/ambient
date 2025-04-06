@@ -1,16 +1,23 @@
 'use client';
 
-import { useAtom } from 'jotai';
-import { playlistDrawerAtom, settingDrawerAtom } from '@/atoms/drawer';
+import { createContext, useContext } from 'react';
 
-export default function useDrawer() {
-  const [settingsDrawerState, setSettingsDrawerState] = useAtom(settingDrawerAtom);
-  const [playlistDrawerState, setPlaylistDrawerState] = useAtom(playlistDrawerAtom);
+export const DrawerContext = createContext<{
+  playlistOpen: boolean;
+  settingsOpen: boolean;
+  setPlaylistOpen: (open: boolean) => void;
+  setSettingsOpen: (open: boolean) => void;
+}>({
+  playlistOpen: false,
+  settingsOpen: false,
+  setPlaylistOpen: () => {},
+  setSettingsOpen: () => {},
+});
 
-  return {
-    settingsDrawerState,
-    setSettingsDrawerState,
-    playlistDrawerState,
-    setPlaylistDrawerState,
-  };
+export function useDrawer() {
+  const context = useContext(DrawerContext);
+  if (context === null) {
+    throw new Error('useDrawer must be used within a DrawerProvider');
+  }
+  return context;
 }

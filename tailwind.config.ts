@@ -1,14 +1,10 @@
-import type { Config } from 'tailwindcss';
-import flowbite from 'flowbite-react/tailwind';
+import * as flowbite from 'flowbite-react/tailwind';
+import { Config } from 'tailwindcss';
 
 const config: Config = {
-  darkMode: 'class',
-  content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-    flowbite.content(),
-  ],
+  darkMode: 'selector',
+  content: ['./src/**/*.tsx', flowbite.content()],
+  plugins: [flowbite.plugin()],
   theme: {
     extend: {
       screens: {
@@ -50,8 +46,8 @@ const config: Config = {
       zIndex: {
         99: '99',
       },
-    },
-  },
-  plugins: [flowbite.plugin()],
+    }
+  }
 };
+
 export default config;
