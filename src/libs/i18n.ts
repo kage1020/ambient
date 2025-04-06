@@ -1,7 +1,7 @@
 import 'server-only';
 
-import en from '../../assets/languages/lang-en.json';
-import ja from '../../assets/languages/lang-ja.json';
+import en from '../assets/languages/lang-en.json';
+import ja from '../assets/languages/lang-ja.json';
 import { headers } from 'next/headers';
 
 export type Translation = typeof en;
