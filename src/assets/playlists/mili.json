@@ -1,0 +1,32 @@
+{
+  "Mili": [
+    {
+      "title": "Rightfully",
+      "artist": "Mili",
+      "videoid": "Q6Ik94T99Ag"
+    },
+    {
+      "title": "Mob Mentality",
+      "artist": "Mili",
+      "videoid": "lGIXSbT5FvY"
+    },
+    {
+      "title": "Region",
+      "artist": "Mili",
+      "videoid": "WyKyWzG_A1M"
+    },
+    {
+      "title": "Through Our Paths May Diverge",
+      "artist": "Mili",
+      "videoid": "4yoggGFL3gw"
+    }
+  ],
+  "options": {
+    "autoplay": true,
+    "shuffle": true,
+    "dark": true,
+    "caption": "%artist% - %title%",
+    "playlist": "%artist% - %title%",
+    "fs": true
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "YouTube Favorites": [
+    {
+      "title": "Thunder",
+      "artist": "Imagine Dragons",
+      "videoid": "fKopy74weus",
+      "start": "21"
+    },
+    {
+      "title": "Numb",
+      "artist": "Linkin Park",
+      "videoid": "kXYiU_JCYtU"
+    },
+    {
+      "title": "Unity",
+      "artist": "TheFatRat",
+      "videoid": "n8X9_MgEdCg"
+    }
+  ],
+  "Local PC Music": [
+    {
+      "disc": 1,
+      "track": 1,
+      "file": "Grandia_Theme.mp3",
+      "title": "Unforgettable Adventure",
+      "desc": "The Best of Grandia Disc1",
+      "artist": "Noritaka Iwadare",
+      "image": "The_Best_of_GRANDIA.jpg"
+    },
+    {
+      "disc": 1,
+      "track": 1,
+      "file": "Journey_to_the_Fantasy_World.mp3",
+      "title": "Prologue - Journey to the Fantasy World",
+      "desc": "Title Theme",
+      "artist": "Genso Suikoden Original Game Soundtrack DISC1",
+      "image": "gensousuikoden.webp"
+    }
+  ],
+  "options": {
+    "autoplay": true,
+    "random": true,
+    "seek": true,
+    "dark": false
+  }
+}

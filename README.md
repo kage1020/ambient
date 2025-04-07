@@ -1,8 +1,8 @@
 <h1 align="center">
   <div align="center">
-    <img src="./views/images/ambient-logo-color.svg" width="64" align="center" />
+    <img src="./assets/images/ambient-logo-color.svg" width="64" align="center" />
   </div>
-  Ambient
+  Ambient with Next.js
 </h1>
 
 Ambient is a media player that runs on a web browser using YouTube IFrame Player API. It also supports playing media files on your local PC.<br>
@@ -10,14 +10,8 @@ Ambient lets you create mixed playlists of your favorite YouTube videos and othe
 **Let's start your ambient media experience!**
 
 <p align="center">
-  <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/ka215/ambient">
-  <!-- img alt="GitHub last commit (branch)" arc="https://img.shields.io/github/last-commit/ka215/ambient/main" -->
-  <!-- img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/ka215/ambient" -->
-  <!-- img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/ka215/ambient" -->
-  <!-- img alt="CircleCI" src="https://img.shields.io/circleci/build/github/ka215/ambient/main" -->
-  <!-- img alt="GitHub all releases" src="https://img.shields.io/github/downloads/ka215/ambient/total" -->
-  <!-- img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/ka215/ambient" -->
-  <img alt="GitHub" src="https://img.shields.io/github/license/ka215/ambient">
+  <img alt="GitHub package.json version" src="https://img.shields.io/github/package-json/v/kage1020/ambient">
+  <img alt="GitHub" src="https://img.shields.io/github/license/kage1020/ambient">
 </p>
 
 <p align="center">
@@ -29,8 +23,12 @@ Ambient lets you create mixed playlists of your favorite YouTube videos and othe
   <a href="#compatibility">Compatibility</a> &middot;
   <a href="#localization">Localization</a> &middot;
   <a href="#references">References</a> &middot;
-  <a href="#finally">Finally</a>
+  <a href="#finally">Finally</a> &middot;
+  <a href="#acknowledgments">Acknowledgments</a>
 </p>
+
+> [!NOTE]
+> This project is a fork of [ka215/ambient](https://github.com/ka215/ambient) and has been modified to run on Next.js.
 
 ## Introduction
 
@@ -60,23 +58,30 @@ In essence, "Ambient" is a web application, so it can be accessed and utilized s
 
 For this reason, the cloud version released for demonstration purposes does not store any media on the host web server, making it a media player that can only play and manage YouTube media.
 
-Now, to run the main feature, "Ambient," you'll need to prepare the PHP execution environment and set up a web server (Apache etc.) environment on your local PC so that you can access it via a web browser. Well, the easiest way to go about it would be to install "XAMPP" for Windows machines or "MAMP" for Mac. If you have the know-how, setting up a virtual environment with Docker or WSL is also an option, and you can use not only Apache but also Nginx for the web server (it will work as long as you configure URL rewriting).
+Now, to run the main feature, "Ambient," you'll need to prepare the Node.js execution environment and run the Next.js server on your local PC so that you can access it via a web browser. Well, the easiest way to go about it would be to install "Node.js". If you have the know-how, setting up a virtual environment with Docker or WSL is also an option.
 
-As for the PHP version, as long as it's PHP 7.4 or later, it should work without any issues. I developed "Ambient" in a PHP 8.2.4 environment, but I haven't included any code that only works in versions 8.x and later.
+As for the Node.js version, as long as it's Node.s 18 or later, it should work without any issues. I developed "Ambient" in a Node.js 20.9.0 environment.
 
 Furthermore, the JavaScript and CSS installation packages have already been deployed, so there shouldn't be any issues with running it on the latest browsers.
 
 ## Installation
 
-Installing "Ambient" is as simple as fetching the package resources from [the GitHub repository](https://github.com/ka215/ambient). If you're using the command line, navigate to the path where you want to install it (directly under the document root, for example), and execute the following command:
+Installing "Ambient" is as simple as fetching the package resources from [the GitHub repository](https://github.com/kage1020/ambient). If you're using the command line, navigate to the path where you want to install it (directly under the document root, for example), and execute the following command:
 
 ```
-git clone https://github.com/ka215/ambient.git ambient
+git clone https://github.com/kage1020/ambient.git ambient
 ```
 
-This will create the ambient directory and install the files within it. If you installed it using the above command directly under the document root, you can start it by entering `localhost/ambient` in the URL bar of your browser (if you have specified a virtual host name, it would be `http://<hostname>/ambient` ).
+This will create the ambient directory and install the files within it. If you installed it using the above command directly under the document root, you can start it by running:
 
-Alternatively, you can download the ZIP files from each release version of [Ambient Release Packages](https://github.com/ka215/ambient/releases) and unzip them to the desired installation location.
+```
+npm install
+npm run dev
+```
+
+and entering `http://localhost:3000` in the URL bar of your browser.
+
+Alternatively, you can download the ZIP files from each release version of [Ambient Release Packages](https://github.com/kage1020/ambient/releases) and unzip them to the desired installation location.
 
 ## Creating Playlists
 
@@ -176,6 +181,9 @@ If there are no changes to the default values for the "options" property, it can
 
 ## Media Assets
 
+> [!CAUTION]
+> **This project does not support local media play feature now.**
+
 If all the media set in the playlist is from YouTube, you can skip this phase.
 
 If you intend to play local PC media, you need to place the playback media and image files in the Ambient asset directory. The process for installing asset files is as follows:
@@ -195,13 +203,13 @@ It's worth noting that Ambient doesn't support Windows shortcuts, so creating sy
 mklink /D nzk "C:\Users\<YourUserName>\Music\BEST OF VOCAL WORKS [nZk]"
 ```
 to register the path to the folder where the local PC media is already stored as a symbolic link (if the folder name contains spaces, enclose the entire link path in quotation marks).
-3. Update the file path specification of the file property in the playlist JSON media data to use the path via the symbolic link, for example, `nzk/friends.mp4`.
+1. Update the file path specification of the file property in the playlist JSON media data to use the path via the symbolic link, for example, `nzk/friends.mp4`.
 
 **For Mac (Linux)**
 
 1. Launch a command-line tool like Terminal and navigate to the Ambient media folder, then use the command:
 ```bash
-cd /Applications/MAMP/htdocs/ambient/assets/media
+cd ambient/assets/media
 ln -s nzk /Users/YourUserName/Music/BEST\ OF\ VOCAL\ WORKS\ [nZk]
 ```
 to register the path to the folder where the local PC media is stored as a symbolic link (if the folder name contains spaces, escape them with a backslash).
@@ -231,6 +239,9 @@ Once the playlist is loaded, the play button in the bottom menu becomes active, 
 ③ The left and right arrow buttons displaying the thumbnails of the media allow you to specify the previously played media or the candidate media to be played next.
 
 ## Compatibility
+
+> [!CAUTION]
+> **This project does not check the compatibility.**
 
 As of October 20, 2023, the compatibility status for browsers and media file playback is as follows:
 
@@ -336,3 +347,7 @@ Please note that the only API used by "Ambient" is the IFrame Player API, and is
 [https://github.com/ka215/ambient](https://github.com/ka215/ambient)
 
 I would be delighted to hear your thoughts and feedback!
+
+## Acknowledgments
+
+I would like to express my gratitude to original author [ka215](https://github.com/ka215) for creating the Ambient project.
