@@ -50,6 +50,7 @@ I am personally very satisfied with the outcome of this media player.
 
 Also, I offer a cloud version for demonstration purposes, so please try it out below:
 
+[original Ambient DEMO (cloud ver.)](https://amp.ka2.org/)
 [Ambient DEMO (cloud ver.)](https://ambient-nextjs.vercel.app/)
 
 ## Environment
