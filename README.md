@@ -1,6 +1,6 @@
 <h1 align="center">
   <div align="center">
-    <img src="./assets/images/ambient-logo-color.svg" width="64" align="center" />
+    <img src="./src/assets/images/ambient-logo-color.svg" width="64" align="center" />
   </div>
   Ambient with Next.js
 </h1>
@@ -50,7 +50,7 @@ I am personally very satisfied with the outcome of this media player.
 
 Also, I offer a cloud version for demonstration purposes, so please try it out below:
 
-[Ambient DEMO (cloud ver.)](https://amp.ka2.org/)
+[Ambient DEMO (cloud ver.)](https://ambient-nextjs.vercel.app/)
 
 ## Environment
 

@@ -2,11 +2,8 @@ import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { headers } from 'next/headers';
 import { Toaster } from 'sonner';
-import { defaultPlaylistOption } from '@/libs/const';
 import { getTranslation } from '@/libs/i18n';
 import { parsePageParams, type PageParams } from '@/libs/params';
-import { getPlaylist } from '@/libs/playlist';
-import { Provider } from './_components/provider';
 import './globals.css';
 
 const mplus = localFont({
@@ -28,21 +25,21 @@ export async function generateMetadata({ params }: ParamsProps): Promise<Metadat
     title: t['Ambient Media Player'],
     description:
       t['Ambient is a media player that runs on a web browser using YouTube IFrame Player API.'],
+    openGraph: {
+      siteName: t['Ambient Media Player'],
+      url: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:8765'),
+    },
   };
 }
 
-type AppLayoutProps = ParamsProps & {
+type AppLayoutProps = {
   children: React.ReactNode;
 };
 
-export default async function AppLayout({ children, params }: AppLayoutProps) {
+export default async function AppLayout({ children }: AppLayoutProps) {
   const header = await headers();
   const searchParams = new URLSearchParams(header.get('X-Search-Params') ?? '');
-  const { parsedParams, parsedSearchParams } = await parsePageParams({ params, searchParams });
-  const t = await getTranslation(parsedParams.locale);
-  const playlist = parsedSearchParams.playlist
-    ? await getPlaylist(parsedSearchParams.playlist)
-    : null;
+  const { parsedParams } = await parsePageParams({ searchParams });
 
   return (
     <html lang={parsedParams.locale} className={mplus.variable} suppressHydrationWarning>
@@ -51,14 +48,8 @@ export default async function AppLayout({ children, params }: AppLayoutProps) {
         <meta name='viewport' content='width=device-width, initial-scale=1' />
       </head>
       <body className='antialiased w-screen h-screen bg-white dark:bg-gray-800 overflow-hidden transition-all'>
-        <Provider
-          t={t}
-          pageParams={{ parsedParams, parsedSearchParams }}
-          playlistOption={playlist?.options ?? defaultPlaylistOption}
-        >
-          <Toaster className='w-full' position='top-center' toastOptions={{ unstyled: true }} />
-          {children}
-        </Provider>
+        <Toaster className='w-full' position='top-center' toastOptions={{ unstyled: true }} />
+        {children}
       </body>
     </html>
   );

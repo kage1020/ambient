@@ -101,8 +101,6 @@ export function VideoPlayer({ url, mediaCount, caption }: VideoPlayerProps) {
                 },
               },
             }}
-            onBuffer={() => console.log('onBuffer')}
-            onBufferEnd={() => console.log('onBufferEnd')}
             onClickPreview={(e) => console.log('onClickPreview', e)}
             onDuration={(duration) => console.log('onDuration', duration)}
             onEnded={onEnded}

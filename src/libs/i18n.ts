@@ -13,7 +13,7 @@ export async function getLanguageFileNames() {
   if (!isLocal) return ['lang-en.json', 'lang-ja.json'];
 
   const fs = await import('node:fs/promises');
-  const files = await fs.readdir(`${process.cwd()}/assets/languages`);
+  const files = await fs.readdir(`${process.cwd()}/src/assets/languages`);
   return files.filter((file) => file.endsWith('.json') && file.includes('-'));
 }
 
@@ -37,6 +37,6 @@ export async function getTranslation(locale?: string): Promise<Translation> {
   if (!file) return en;
 
   const fs = await import('node:fs/promises');
-  const content = await fs.readFile(`${process.cwd()}/assets/languages/${file}`, 'utf-8');
+  const content = await fs.readFile(`${process.cwd()}/src/assets/languages/${file}`, 'utf-8');
   return JSON.parse(content) as Translation;
 }
