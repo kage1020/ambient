@@ -8,7 +8,7 @@ import {
   type ThemeProviderProps,
 } from 'next-themes';
 
-export type Theme = 'system' | 'light' | 'dark';
+export type Theme = 'light' | 'dark';
 
 interface UseThemeProps {
   /** List of all available theme names */
@@ -33,7 +33,7 @@ function ThemeProvider({ children, storageKey, ...props }: ThemeProviderProps) {
   useEffect(() => {
     if (!storageKey) return;
     const stored = localStorage.getItem(storageKey);
-    if (!stored) localStorage.setItem(storageKey, 'system');
+    if (!stored) localStorage.setItem(storageKey, 'light');
   }, [storageKey]);
 
   return (

@@ -87,7 +87,7 @@ export function VideoPlayer({ url, mediaCount, caption }: VideoPlayerProps) {
             ref={playerRef}
             url={url}
             playing={playing}
-            volume={options.volume}
+            volume={(options.volume ?? 100) / 100}
             stopOnUnmount={false}
             loop={options.loop}
             config={{

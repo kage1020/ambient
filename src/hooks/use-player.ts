@@ -5,7 +5,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import type ReactPlayer from 'react-player';
 import { defaultPlaylistOption } from '@/libs/const';
 import type { PlaylistOption } from '@/libs/playlist';
-import { Random } from '@/libs/random';
 
 type PlayerContextType = {
   playerRef: React.RefObject<ReactPlayer | null> | null;
@@ -42,35 +41,42 @@ export function usePlayer() {
 
   const playAt = useCallback(
     (index: number) => {
+      if (index.toString() === searchParams.get('mediaIndex')) {
+        context.playerRef?.current?.seekTo(0);
+        return;
+      }
+
       const newSearchParams = new URLSearchParams(searchParams.toString());
       newSearchParams.set('mediaIndex', index.toString());
       router.push(`?${newSearchParams.toString()}`);
     },
-    [router, searchParams]
+    [context.playerRef, router, searchParams]
   );
 
   const playPrev = useCallback(
     (currentIndex: number, mediaCount: number) => {
       if (context.options.random) {
-        const random = new Random(Number.parseInt(searchParams.get('seed') ?? '42'));
-        playAt(random.next() % mediaCount);
+        playAt(Math.floor(Math.random() * mediaCount));
+      } else if (context.options.loop) {
+        playAt(currentIndex);
       } else {
         playAt((currentIndex - 1 + mediaCount) % mediaCount);
       }
     },
-    [context.options.random, playAt, searchParams]
+    [context.options.loop, context.options.random, playAt]
   );
 
   const playNext = useCallback(
     (currentIndex: number, mediaCount: number) => {
       if (context.options.random) {
-        const random = new Random(Number.parseInt(searchParams.get('seed') ?? '42'));
-        playAt(random.next() % mediaCount);
+        playAt(Math.floor(Math.random() * mediaCount));
+      } else if (context.options.loop) {
+        playAt(currentIndex);
       } else {
         playAt((currentIndex + 1) % mediaCount);
       }
     },
-    [context.options.random, playAt, searchParams]
+    [context.options.loop, context.options.random, playAt]
   );
 
   const selectPlaylist = useCallback(
