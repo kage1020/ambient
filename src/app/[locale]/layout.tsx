@@ -1,9 +1,7 @@
-import type { Metadata } from 'next';
 import localFont from 'next/font/local';
 import { headers } from 'next/headers';
 import { Toaster } from 'sonner';
-import { getTranslation } from '@/libs/i18n';
-import { parsePageParams, type PageParams } from '@/libs/params';
+import { parsePageParams } from '@/libs/params';
 import './globals.css';
 
 const mplus = localFont({
@@ -11,26 +9,6 @@ const mplus = localFont({
   display: 'swap',
   variable: '--font-mplus',
 });
-
-type ParamsProps = {
-  params: PageParams['params'];
-};
-
-export async function generateMetadata({ params }: ParamsProps): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslation(locale);
-
-  return {
-    metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:8765'),
-    title: t['Ambient Media Player'],
-    description:
-      t['Ambient is a media player that runs on a web browser using YouTube IFrame Player API.'],
-    openGraph: {
-      siteName: t['Ambient Media Player'],
-      url: new URL(process.env.NEXT_PUBLIC_BASE_URL ?? 'http://localhost:8765'),
-    },
-  };
-}
 
 type AppLayoutProps = {
   children: React.ReactNode;

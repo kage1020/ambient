@@ -8,7 +8,7 @@ const defaultAvailableLocales = ['en', 'ja'];
 
 export const config = {
   matcher: [
-    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|opengraph-image).*)',
+    '/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|opengraph-image|manifest.webmanifest|icon.svg|sw.js).*)',
   ],
   // runtime: 'nodejs',
 };

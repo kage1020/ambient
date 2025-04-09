@@ -1,10 +1,9 @@
 import { ImageResponse } from 'next/og';
 import { getTranslation } from '@/libs/i18n';
-import type { PageParams } from '@/libs/params';
 
-export async function generateImageMetadata({ params }: PageParams) {
-  const { locale } = await params;
-  const t = await getTranslation(locale);
+export async function generateImageMetadata() {
+  const t = await getTranslation();
+
   return [
     {
       id: 'og',

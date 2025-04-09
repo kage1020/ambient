@@ -86,8 +86,9 @@ export async function parsePageParams(
 }
 
 export async function getPageParams() {
-  const locale = (await headers()).get('X-Locale');
-  const searchParams = new URLSearchParams((await headers()).get('X-Search-Params') ?? '');
+  const headerList = await headers();
+  const locale = headerList.get('X-Locale');
+  const searchParams = new URLSearchParams(headerList.get('X-Search-Params') ?? '');
 
   return {
     params: paramsSchema.parse({ locale }),
