@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { useDrawer } from '@/hooks/use-drawer';
 import { usePlayer } from '@/hooks/use-player';
 import { cn } from '@/libs/tw';
 import { scrollIntoView } from '@/libs/utils';
@@ -14,6 +15,7 @@ type MediaItemProps = {
 export function MediaItem({ index, mediaIndex, children }: MediaItemProps) {
   const targetRef = useRef<HTMLButtonElement>(null);
   const { playAt } = usePlayer();
+  const { playlistOpen } = useDrawer();
 
   const handlePlay = (e: React.MouseEvent<HTMLButtonElement>, index: number) => {
     e.preventDefault();
@@ -23,8 +25,8 @@ export function MediaItem({ index, mediaIndex, children }: MediaItemProps) {
   };
 
   useEffect(() => {
-    if (index === mediaIndex) scrollIntoView(targetRef.current);
-  }, [index, targetRef, mediaIndex]);
+    if (index === mediaIndex && playlistOpen) scrollIntoView(targetRef.current);
+  }, [index, targetRef, mediaIndex, playlistOpen]);
 
   return (
     <button
