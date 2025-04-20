@@ -1,10 +1,10 @@
-import type { PlaylistOption } from '@/libs/playlist';
+import type { PlaylistOption } from "@/libs/playlist"
 
-export const defaultLocale = 'en' as const;
+export const defaultLocale = "en" as const
 
-export const allCategory = 'all' as const;
+export const allCategory = "all" as const
 
-export const defaultFormat = '%title% - %artist%';
+export const defaultFormat = "%title% - %artist%"
 
 export const defaultPlaylistOption: PlaylistOption = {
   autoplay: true,
@@ -16,11 +16,11 @@ export const defaultPlaylistOption: PlaylistOption = {
   volume: 100,
   fader: false,
   dark: false,
-  background: '',
+  background: "",
   caption: defaultFormat,
-  playlist: '',
+  playlist: "",
   fs: false,
   cc: false,
-};
+}
 
-export const isLocal = process.env.NEXT_PUBLIC_PROD === undefined;
+export const isLocal = process.env.NEXT_PUBLIC_PROD === undefined
