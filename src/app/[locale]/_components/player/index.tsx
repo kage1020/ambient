@@ -46,7 +46,7 @@ export async function Player({ playlist, mediaList }: PlayerProps) {
       </div>
       <VideoPlayer url={url} mediaCount={mediaList.length} caption={caption} />
       <div className="my-4 transition-all duration-150 ease-out flex justify-center gap-2">
-        <CarouselShowButton />
+        <CarouselShowButton hidden={!Boolean(media?.mediaId)} />
         <VideoExpandButton hidden={!Boolean(media?.mediaId)} />
         <VideoFullscreenButton hidden={!Boolean(media?.mediaId)} />
         <Link

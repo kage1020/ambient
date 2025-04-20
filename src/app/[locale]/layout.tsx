@@ -33,7 +33,6 @@ export default async function AppLayout({ children }: AppLayoutProps) {
           href="https://www.youtube.com/player_api"
           as="script"
         />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className="antialiased w-screen h-screen bg-white dark:bg-gray-800 overflow-hidden transition-all">
         <Toaster
