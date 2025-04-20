@@ -1,14 +1,14 @@
-import { headers } from 'next/headers';
-import { z } from 'zod';
+import { headers } from "next/headers"
+import { z } from "zod"
 // import { defaultLocale } from '@/libs/i18n';
 
-const defaultLocale = 'en';
+const defaultLocale = "en"
 
 export const paramsSchema = z
   .object({
-    locale: z.string().default('en'),
+    locale: z.string().default("en"),
   })
-  .catch({ locale: defaultLocale });
+  .catch({ locale: defaultLocale })
 export const searchParamsSchema = z
   .object({
     playlist: z.string().nullable().default(null),
@@ -18,17 +18,17 @@ export const searchParamsSchema = z
       .nullable()
       .default(null)
       .transform((val) => {
-        const parsed = Number.parseInt(val ?? '');
-        return Number.isNaN(parsed) ? null : parsed;
+        const parsed = Number.parseInt(val ?? "")
+        return Number.isNaN(parsed) ? null : parsed
       }),
     seed: z.string().transform((val) => {
-      const parsed = Number.parseInt(val);
-      return Number.isNaN(parsed) ? new Date().getTime() : parsed;
+      const parsed = Number.parseInt(val)
+      return Number.isNaN(parsed) ? new Date().getTime() : parsed
     }),
     shuffle: z
       .string()
-      .default('false')
-      .transform((val) => val === 'true'),
+      .default("false")
+      .transform((val) => val === "true"),
   })
   .catch({
     playlist: null,
@@ -36,44 +36,44 @@ export const searchParamsSchema = z
     mediaIndex: null,
     seed: new Date().getTime(),
     shuffle: false,
-  });
+  })
 
 export type PageParams = {
   params: Promise<{
-    locale: string;
-  }>;
+    locale: string
+  }>
   searchParams: Promise<
     Partial<{
-      playlist: string;
-      category: string;
-      mediaIndex: string;
-      seed: string;
-      shuffle: string;
+      playlist: string
+      category: string
+      mediaIndex: string
+      seed: string
+      shuffle: string
     }>
-  >;
-};
+  >
+}
 
 export type ParsedPageParams = {
   parsedParams: {
-    locale: string;
-  };
+    locale: string
+  }
   parsedSearchParams: {
-    playlist: string | null;
-    category: string | null;
-    mediaIndex: number | null;
-    seed: number;
-    shuffle: boolean;
-  };
-};
+    playlist: string | null
+    category: string | null
+    mediaIndex: number | null
+    seed: number
+    shuffle: boolean
+  }
+}
 
 export async function parsePageParams(
   pageParams: Partial<{
-    params: PageParams['params'];
-    searchParams: URLSearchParams | PageParams['searchParams'];
+    params: PageParams["params"]
+    searchParams: URLSearchParams | PageParams["searchParams"]
   }>
 ) {
-  const { params, searchParams } = pageParams;
-  const resolvedParams = params instanceof Promise ? await params : params;
+  const { params, searchParams } = pageParams
+  const resolvedParams = params instanceof Promise ? await params : params
 
   return {
     parsedParams: paramsSchema.parse(resolvedParams),
@@ -82,29 +82,35 @@ export async function parsePageParams(
         ? Object.fromEntries(searchParams.entries())
         : await searchParams
     ),
-  };
+  }
 }
 
 export async function getPageParams() {
-  const headerList = await headers();
-  const locale = headerList.get('X-Locale');
-  const searchParams = new URLSearchParams(headerList.get('X-Search-Params') ?? '');
+  const headerList = await headers()
+  const locale = headerList.get("X-Locale")
+  const searchParams = new URLSearchParams(
+    headerList.get("X-Search-Params") ?? ""
+  )
 
   return {
     params: paramsSchema.parse({ locale }),
-    searchParams: searchParamsSchema.parse(Object.fromEntries(searchParams.entries())),
-  };
+    searchParams: searchParamsSchema.parse(
+      Object.fromEntries(searchParams.entries())
+    ),
+  }
 }
 
-export function toSearchParams(parsedSearchParams: ParsedPageParams['parsedSearchParams']) {
-  const searchParams = new URLSearchParams();
+export function toSearchParams(
+  parsedSearchParams: ParsedPageParams["parsedSearchParams"]
+) {
+  const searchParams = new URLSearchParams()
   if (parsedSearchParams.playlist !== null)
-    searchParams.set('playlist', parsedSearchParams.playlist);
+    searchParams.set("playlist", parsedSearchParams.playlist)
   if (parsedSearchParams.category !== null)
-    searchParams.set('category', parsedSearchParams.category);
+    searchParams.set("category", parsedSearchParams.category)
   if (parsedSearchParams.mediaIndex !== null)
-    searchParams.set('mediaIndex', String(parsedSearchParams.mediaIndex));
-  searchParams.set('seed', String(parsedSearchParams.seed));
-  searchParams.set('shuffle', String(parsedSearchParams.shuffle));
-  return searchParams;
+    searchParams.set("mediaIndex", String(parsedSearchParams.mediaIndex))
+  searchParams.set("seed", String(parsedSearchParams.seed))
+  searchParams.set("shuffle", String(parsedSearchParams.shuffle))
+  return searchParams
 }

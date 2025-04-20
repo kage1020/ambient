@@ -1,21 +1,29 @@
-'use client';
+"use client"
 
-import { useEffect } from 'react';
+import { useDrawer } from "@/hooks/use-drawer"
+import useMediaQuery from "@/hooks/use-media-query"
 import {
   Drawer as FbDrawer,
   type DrawerHeaderProps as FbDrawerHeaderProps,
   type DrawerProps as FbDrawerProps,
-} from 'flowbite-react';
-import { useDrawer } from '@/hooks/use-drawer';
-import useMediaQuery from '@/hooks/use-media-query';
+} from "flowbite-react"
+import { useEffect } from "react"
 
-type DrawerHeaderProps = Omit<FbDrawerHeaderProps, 'title' | 'titleIcon' | 'closeIcon'> & {
-  title: React.ReactNode;
-  titleIcon?: React.ReactNode;
-  closeIcon?: React.ReactNode;
-};
+type DrawerHeaderProps = Omit<
+  FbDrawerHeaderProps,
+  "title" | "titleIcon" | "closeIcon"
+> & {
+  title: React.ReactNode
+  titleIcon?: React.ReactNode
+  closeIcon?: React.ReactNode
+}
 
-export function DrawerHeader({ title, titleIcon, closeIcon, ...props }: DrawerHeaderProps) {
+export function DrawerHeader({
+  title,
+  titleIcon,
+  closeIcon,
+  ...props
+}: DrawerHeaderProps) {
   return (
     <FbDrawer.Header
       title={title as string}
@@ -23,18 +31,18 @@ export function DrawerHeader({ title, titleIcon, closeIcon, ...props }: DrawerHe
       closeIcon={() => closeIcon}
       {...props}
     />
-  );
+  )
 }
 
-type DrawerProps = Omit<FbDrawerProps, 'open' | 'onClose'>;
+type DrawerProps = Omit<FbDrawerProps, "open" | "onClose">
 
 export function PlaylistDrawer({ backdrop, ...props }: DrawerProps) {
-  const { playlistOpen, setPlaylistOpen } = useDrawer();
-  const { isLg } = useMediaQuery();
+  const { playlistOpen, setPlaylistOpen } = useDrawer()
+  const { isLg } = useMediaQuery()
 
   useEffect(() => {
-    setPlaylistOpen(isLg);
-  }, [isLg, setPlaylistOpen]);
+    setPlaylistOpen(isLg)
+  }, [isLg, setPlaylistOpen])
 
   return (
     <FbDrawer
@@ -43,16 +51,16 @@ export function PlaylistDrawer({ backdrop, ...props }: DrawerProps) {
       backdrop={backdrop || !isLg}
       {...props}
     />
-  );
+  )
 }
 
 export function SettingsDrawer({ backdrop, ...props }: DrawerProps) {
-  const { settingsOpen, setSettingsOpen } = useDrawer();
-  const { isLg } = useMediaQuery();
+  const { settingsOpen, setSettingsOpen } = useDrawer()
+  const { isLg } = useMediaQuery()
 
   useEffect(() => {
-    setSettingsOpen(isLg);
-  }, [isLg, setSettingsOpen]);
+    setSettingsOpen(isLg)
+  }, [isLg, setSettingsOpen])
 
   return (
     <FbDrawer
@@ -60,8 +68,8 @@ export function SettingsDrawer({ backdrop, ...props }: DrawerProps) {
       onClose={() => setSettingsOpen(false)}
       backdrop={backdrop || !isLg}
       tabIndex={-1}
-      position='right'
+      position="right"
       {...props}
     />
-  );
+  )
 }

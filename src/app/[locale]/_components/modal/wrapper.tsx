@@ -1,14 +1,19 @@
-'use client';
+"use client"
 
-import { Modal as FbModal, ModalProps } from 'flowbite-react';
-import { useModal } from '@/hooks/use-modal';
+import { useModal } from "@/hooks/use-modal"
+import { Modal as FbModal, ModalProps } from "flowbite-react"
 
 export function Modal({ children, ...props }: ModalProps) {
-  const { modalOpen, setModalOpen } = useModal();
+  const { modalOpen, setModalOpen } = useModal()
 
   return (
-    <FbModal {...props} show={modalOpen} onClose={() => setModalOpen(false)} dismissible>
+    <FbModal
+      {...props}
+      show={modalOpen}
+      onClose={() => setModalOpen(false)}
+      dismissible
+    >
       {children}
     </FbModal>
-  );
+  )
 }

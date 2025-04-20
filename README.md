@@ -174,7 +174,7 @@ Next, let's explain the data structure of the "options" property for the initial
 | dark | boolean | false | Flag to enable dark mode for the Ambient UI. It can be changed on the Ambient settings. |
 | background | string | - | File path for displaying a background image in the Ambient UI. It should be specified as a relative path from the `assets/images` folder under the Ambient installation directory. |
 | caption | string | `%artist% - %title% - %desc%` | Format for displaying media data in the caption section of Ambient. Use `%<Property Name>%` placeholders to refer to the property values defined in the media data. It is also possible to markup with HTML tags. |
-| playlist | string | `%artist% - %title%` | Format for displaying media data in the playlist (left drawer) of Ambient. Use `%<Property Name>%` placeholders to refer to the property values defined in the media data. It is also possible to markup with HTML tags. |
+| playlist(disabled) | string | `%artist% - %title%` | Format for displaying media data in the playlist (left drawer) of Ambient. Use `%<Property Name>%` placeholders to refer to the property values defined in the media data. It is also possible to markup with HTML tags. |
 | fs | boolean | false | You can switch from embedded player view to full screen view for all media in your playlist. For information on how to switch the display, please refer to the explanation for the same item in Media Data. |
 | cc | boolean | false | Enable toggle subtitle display for all media in the playlist. However, the only media that supports this feature are YouTube videos with subtitles set. |
 
