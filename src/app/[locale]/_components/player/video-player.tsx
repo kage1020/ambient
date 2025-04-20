@@ -1,5 +1,6 @@
 "use client"
 
+import { useCarousel } from "@/hooks/use-carousel"
 import { useDrawer } from "@/hooks/use-drawer"
 import { usePageParams } from "@/hooks/use-page-params"
 import { usePlayer } from "@/hooks/use-player"
@@ -20,6 +21,7 @@ export function VideoPlayer({ url, mediaCount, caption }: VideoPlayerProps) {
   const { options, playing, playerRef, display, setPlaying, playAt, playNext } =
     usePlayer()
   const { settingsOpen, playlistOpen } = useDrawer()
+  const { carouselOpen } = useCarousel()
   const [mounted, setMounted] = useState(false)
   const t = useTranslation()
   const { parsedSearchParams } = usePageParams()
@@ -57,8 +59,9 @@ export function VideoPlayer({ url, mediaCount, caption }: VideoPlayerProps) {
   return (
     <figure
       className={cn(
-        "w-full flex flex-col items-center gap-1 my-4",
-        display === "expanded" && "h-[64vh]"
+        "w-full flex flex-col items-center gap-1",
+        display === "expanded" && carouselOpen && "h-[65%]",
+        display === "expanded" && !carouselOpen && "h-[85%]"
       )}
     >
       <MediaCaption caption={caption} />
@@ -71,7 +74,7 @@ export function VideoPlayer({ url, mediaCount, caption }: VideoPlayerProps) {
             "w-full border-transparent dark:border-transparent dark:bg-transparent dark:text-transparent",
           display === "normal"
             ? "max-w-2xl"
-            : "w-[calc(100%-40rem)] h-[calc(56vw-4rem)] *:!w-full *:!h-full",
+            : "w-[calc(100%-40rem)] h-full *:!w-full *:!h-full",
           display === "expanded" &&
             playlistOpen &&
             !settingsOpen &&

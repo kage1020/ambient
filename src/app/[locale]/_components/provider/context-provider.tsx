@@ -37,7 +37,7 @@ export function ContextProvider({
   const [playlistOpen, setPlaylistOpen] = useState(true)
   const [settingsOpen, setSettingsOpen] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
-  const [carouselOpen, setCarouselOpen] = useState(false)
+  const [carouselOpen, setCarouselOpen] = useState(true)
   const [remotePlaylists, setRemotePlaylists] = useState<string[]>([])
   const [display, setDisplay] = useState<"normal" | "expanded">("normal")
   const searchParams = useSearchParams()
