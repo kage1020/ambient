@@ -26,6 +26,11 @@ export function PlaylistSelect({
     selectPlaylist("")
   }
 
+  const onBlur = () => {
+    if (url === selectedPlaylistName) return
+    selectPlaylist(url)
+  }
+
   useEffect(() => {
     if (selectedPlaylistName?.startsWith("http")) {
       setUrl(selectedPlaylistName)
@@ -65,7 +70,7 @@ export function PlaylistSelect({
           placeholder={t["Input playlist URL"]}
           value={url}
           onChange={(e) => setUrl(e.target.value)}
-          onBlur={() => selectPlaylist(url)}
+          onBlur={onBlur}
         />
         <Button
           color="red"
