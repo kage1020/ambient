@@ -2,7 +2,7 @@ import { defaultPlaylistOption } from "@/libs/const"
 import { getTranslation } from "@/libs/i18n"
 import { getPageParams, type PageParams, parsePageParams } from "@/libs/params"
 import { getMediaList, getPlaylist } from "@/libs/playlist"
-import { Metadata } from "next"
+import { Metadata, Viewport } from "next"
 import { PlaylistDrawer } from "./_components/drawer/playlist"
 import { SettingsDrawer } from "./_components/drawer/settings"
 import { Menu } from "./_components/menu"
@@ -47,6 +47,13 @@ export async function generateMetadata(): Promise<Metadata> {
       "application-title": title,
     },
   }
+}
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#1f2937" },
+  ],
 }
 
 export default async function Home({ params, searchParams }: PageParams) {

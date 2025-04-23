@@ -31,6 +31,7 @@ export function Thumbnail({ media, mediaCount, disabled }: ThumbnailProps) {
             className="block"
             alt={media?.title || "No media available"}
             fill
+            unoptimized
           />
         </div>
       </div>
