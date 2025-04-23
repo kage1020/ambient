@@ -58,6 +58,7 @@ export async function PlaylistDrawer({ mediaList }: PlaylistDrawerProps) {
                   className="block rounded object-cover"
                   width={32}
                   height={32}
+                  unoptimized
                 />
               )}
               {item.videoid && (
@@ -67,6 +68,7 @@ export async function PlaylistDrawer({ mediaList }: PlaylistDrawerProps) {
                   className="block rounded object-cover"
                   width={32}
                   height={32}
+                  unoptimized
                 />
               )}
             </div>
