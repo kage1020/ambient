@@ -1,8 +1,13 @@
-import { getTranslation } from "@/libs/i18n"
+import { defaultLocale, getTranslation } from "@/libs/i18n"
 import { ImageResponse } from "next/og"
 
-export async function generateImageMetadata() {
-  const t = await getTranslation()
+// Build-time static param collection calls this without the parent locale.
+export async function generateImageMetadata({
+  params,
+}: {
+  params: Partial<{ locale: string }>
+}) {
+  const t = await getTranslation(params.locale ?? defaultLocale)
 
   return [
     {
@@ -14,7 +19,9 @@ export async function generateImageMetadata() {
   ]
 }
 
-export default async function generateImage({ id }: { id: string }) {
+export default async function generateImage({ id }: { id: Promise<string> }) {
+  const imageId = await id
+
   return new ImageResponse(
     (
       <div
@@ -28,7 +35,7 @@ export default async function generateImage({ id }: { id: string }) {
         }}
       >
         <svg
-          id={id}
+          id={imageId}
           width="272.126px"
           height="272.126px"
           viewBox="0 0 272.126 272.126"

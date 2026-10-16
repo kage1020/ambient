@@ -2,11 +2,11 @@
 
 import { useCarousel } from "@/hooks/use-carousel"
 import { useDrawer } from "@/hooks/use-drawer"
+import { useHydrated } from "@/hooks/use-hydrated"
 import { usePageParams } from "@/hooks/use-page-params"
 import { usePlayer } from "@/hooks/use-player"
 import { useTranslation } from "@/hooks/use-translation"
 import { cn } from "@/libs/tw"
-import { useEffect, useState } from "react"
 import ReactPlayer from "react-player"
 import { NoticeType, showMessage } from "../notice"
 import { MediaCaption } from "./caption"
@@ -22,7 +22,7 @@ export function VideoPlayer({ url, mediaCount, caption }: VideoPlayerProps) {
     usePlayer()
   const { settingsOpen, playlistOpen } = useDrawer()
   const { carouselOpen } = useCarousel()
-  const [mounted, setMounted] = useState(false)
+  const hydrated = useHydrated()
   const t = useTranslation()
   const { parsedSearchParams } = usePageParams()
 
@@ -51,10 +51,6 @@ export function VideoPlayer({ url, mediaCount, caption }: VideoPlayerProps) {
     showMessage(t["Failed to load the video."], NoticeType.ERROR)
     setPlaying(false)
   }
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   return (
     <figure
@@ -86,7 +82,7 @@ export function VideoPlayer({ url, mediaCount, caption }: VideoPlayerProps) {
           display === "expanded" && !playlistOpen && !settingsOpen && "w-full"
         )}
       >
-        {mounted && url !== "#" && (
+        {hydrated && url !== "#" && (
           <ReactPlayer
             ref={playerRef}
             url={url}

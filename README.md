@@ -61,7 +61,7 @@ For this reason, the cloud version released for demonstration purposes does not 
 
 Now, to run the main feature, "Ambient," you'll need to prepare the Node.js execution environment and run the Next.js server on your local PC so that you can access it via a web browser. Well, the easiest way to go about it would be to install "Node.js". If you have the know-how, setting up a virtual environment with Docker or WSL is also an option.
 
-As for the Node.js version, as long as it's Node.s 18 or later, it should work without any issues. I developed "Ambient" in a Node.js 20.9.0 environment.
+As for the Node.js version, Node.js 20.9 or later is required, and Node.js 24 is recommended. I developed "Ambient" in a Node.js 20.9.0 environment.
 
 Furthermore, the JavaScript and CSS installation packages have already been deployed, so there shouldn't be any issues with running it on the latest browsers.
 
