@@ -22,13 +22,16 @@ export function Thumbnail({ media, mediaCount, disabled }: ThumbnailProps) {
   return (
     <>
       <PrevButton mediaCount={mediaCount} disabled={disabled} />
-      <div className="relative h-56 max-w-sm w-96 overflow-hidden rounded-lg md:h-64">
+      <div
+        data-testid="thumbnail"
+        className="relative aspect-video w-96 min-w-0 overflow-hidden rounded-lg"
+      >
         <div className="duration-700 ease-in-out relative h-full">
           <Image
             src={
               media?.videoid ? getYoutubeThumbnailURL(media.videoid) : noImage
             }
-            className="block"
+            className="block object-cover"
             alt={media?.title || "No media available"}
             fill
             unoptimized

@@ -1,7 +1,6 @@
 import { parsePageParams } from "@/libs/params"
 import localFont from "next/font/local"
 import { headers } from "next/headers"
-import { Toaster } from "sonner"
 import "./globals.css"
 
 const mplus = localFont({
@@ -34,12 +33,7 @@ export default async function AppLayout({ children }: AppLayoutProps) {
           as="script"
         />
       </head>
-      <body className="antialiased w-screen h-screen bg-white dark:bg-gray-800 overflow-hidden transition-all">
-        <Toaster
-          className="w-full"
-          position="top-center"
-          toastOptions={{ unstyled: true }}
-        />
+      <body className="antialiased w-screen h-dvh pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] bg-white dark:bg-gray-800 overflow-hidden transition-all">
         {children}
       </body>
     </html>

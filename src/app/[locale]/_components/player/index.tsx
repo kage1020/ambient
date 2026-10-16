@@ -5,6 +5,7 @@ import { getMedia, type Media, type Playlist } from "@/libs/playlist"
 import { cn } from "@/libs/tw"
 import Link from "next/link"
 import { ExternalLink as ExternalLinkIcon } from "../icons"
+import { actionButtonClassName } from "./action-button"
 import { CarouselShowButton } from "./carousel-show"
 import { Thumbnail } from "./thumbnail"
 import { VideoExpandButton } from "./video-expand"
@@ -28,8 +29,9 @@ export async function Player({ playlist, mediaList }: PlayerProps) {
 
   return (
     <div
+      data-testid="viewer"
       className={cn(
-        "flex flex-col items-center max-w-full w-full h-full mt-0 mx-auto mb-16 z-10 overflow-y-auto overflow-x-hidden",
+        "flex flex-col items-center max-w-full w-full h-full mt-0 mx-auto pb-[calc(6rem+env(safe-area-inset-bottom))] z-10 overflow-y-auto overflow-x-hidden",
         playlist?.options.background && "bg-no-repeat bg-bottom bg-cover"
       )}
       style={{
@@ -45,7 +47,7 @@ export async function Player({ playlist, mediaList }: PlayerProps) {
         />
       </div>
       <VideoPlayer url={url} mediaCount={mediaList.length} caption={caption} />
-      <div className="my-4 transition-all duration-150 ease-out flex justify-center gap-2">
+      <div className="my-4 px-4 transition-all duration-150 ease-out flex flex-wrap justify-center gap-2">
         <CarouselShowButton hidden={!Boolean(media?.mediaId)} />
         <VideoExpandButton hidden={!Boolean(media?.mediaId)} />
         <VideoFullscreenButton hidden={!Boolean(media?.mediaId)} />
@@ -53,7 +55,7 @@ export async function Player({ playlist, mediaList }: PlayerProps) {
           href={url}
           target="_blank"
           className={cn(
-            "text-gray-900 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-200 font-medium rounded-full text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700 transition-opacity duration-500 ease-in-out",
+            actionButtonClassName,
             media?.videoid ? "block" : "hidden"
           )}
         >

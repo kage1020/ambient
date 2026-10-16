@@ -84,6 +84,15 @@ and entering `http://localhost:3000` in the URL bar of your browser.
 
 Alternatively, you can download the ZIP files from each release version of [Ambient Release Packages](https://github.com/kage1020/ambient/releases) and unzip them to the desired installation location.
 
+### Testing
+
+The player layout on phones and desktops is covered by Playwright end-to-end tests, which run against a production build:
+
+```
+npx playwright install chromium
+npm run test:e2e
+```
+
 ## Creating Playlists
 
 Next, you'll need to create playlists for media playback in "Ambient." When initially installed, an empty playlist is bundled as a template for creating your own playlists. The playlists are stored in the assets folder within the "Ambient" installation directory. It's possible to create multiple playlists, so it's advisable to copy the template `assets/PlayList.json` for your use.
