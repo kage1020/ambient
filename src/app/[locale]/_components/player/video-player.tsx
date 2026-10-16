@@ -62,30 +62,34 @@ export function VideoPlayer({ url, mediaCount, caption }: VideoPlayerProps) {
     >
       <MediaCaption caption={caption} />
       <div
+        data-testid="video-frame"
         className={cn(
-          "flex justify-center rounded-lg overflow-hidden transition-all duration-150 ease-out border",
-          playing &&
-            "w-max h-max border-gray-300 dark:bg-gray-800 dark:text-white dark:border-gray-600",
-          !playing &&
-            "w-full border-transparent dark:border-transparent dark:bg-transparent dark:text-transparent",
-          display === "normal"
-            ? "max-w-2xl"
-            : "w-[calc(100%-40rem)] h-full *:!w-full *:!h-full",
+          "w-full flex justify-center rounded-lg overflow-hidden transition-all duration-150 ease-out border",
+          playing
+            ? "border-gray-300 dark:bg-gray-800 dark:text-white dark:border-gray-600"
+            : "border-transparent dark:border-transparent dark:bg-transparent dark:text-transparent",
+          display === "normal" ? "aspect-video max-w-2xl" : "flex-1 min-h-0",
+          // Drawers sit beside the player only on desktop; elsewhere they overlay it
+          display === "expanded" &&
+            playlistOpen &&
+            settingsOpen &&
+            "desktop:w-[calc(100%-40rem)]",
           display === "expanded" &&
             playlistOpen &&
             !settingsOpen &&
-            "w-[calc(100%-20rem)] translate-x-[10rem]",
+            "desktop:w-[calc(100%-20rem)] desktop:translate-x-[10rem]",
           display === "expanded" &&
             !playlistOpen &&
             settingsOpen &&
-            "w-[calc(100%-20rem)] -translate-x-[10rem]",
-          display === "expanded" && !playlistOpen && !settingsOpen && "w-full"
+            "desktop:w-[calc(100%-20rem)] desktop:-translate-x-[10rem]"
         )}
       >
         {hydrated && url !== "#" && (
           <ReactPlayer
             ref={playerRef}
             url={url}
+            width="100%"
+            height="100%"
             playing={playing}
             volume={(options.volume ?? 100) / 100}
             stopOnUnmount={false}

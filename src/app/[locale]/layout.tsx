@@ -33,7 +33,7 @@ export default async function AppLayout({ children }: AppLayoutProps) {
           as="script"
         />
       </head>
-      <body className="antialiased w-screen h-screen bg-white dark:bg-gray-800 overflow-hidden transition-all">
+      <body className="antialiased w-screen h-dvh pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] bg-white dark:bg-gray-800 overflow-hidden transition-all">
         {children}
       </body>
     </html>

@@ -3,7 +3,7 @@ import { Config } from "tailwindcss"
 
 const config: Config = {
   darkMode: "selector",
-  content: ["./src/**/*.tsx", flowbite.content()],
+  content: ["./src/**/*.{ts,tsx}", flowbite.content()],
   plugins: [flowbite.plugin()],
   theme: {
     extend: {

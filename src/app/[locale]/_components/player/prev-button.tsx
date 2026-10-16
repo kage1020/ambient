@@ -18,7 +18,7 @@ export function PrevButton({ disabled, mediaCount }: PrevButtonProps) {
   return (
     <button
       type="button"
-      className="relative top-0 left-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none disabled:cursor-default"
+      className="relative top-0 left-0 z-30 flex items-center justify-center h-full px-2 sm:px-4 cursor-pointer group focus:outline-none disabled:cursor-default"
       onClick={() =>
         parsedSearchParams.mediaIndex !== null &&
         playPrev(parsedSearchParams.mediaIndex, mediaCount)
