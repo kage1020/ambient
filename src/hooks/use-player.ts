@@ -1,5 +1,6 @@
 "use client"
 
+import { setStorageItem } from "@/hooks/use-storage-item"
 import { defaultPlaylistOption } from "@/libs/const"
 import type { PlaylistOption } from "@/libs/playlist"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -38,11 +39,12 @@ export function usePlayer() {
   if (!context) {
     throw new Error("usePlayer must be used within a PlayerProvider")
   }
+  const { playerRef } = context
 
   const playAt = useCallback(
     (index: number) => {
       if (index.toString() === searchParams.get("mediaIndex")) {
-        context.playerRef?.current?.seekTo(0)
+        playerRef?.current?.seekTo(0)
         return
       }
 
@@ -50,7 +52,7 @@ export function usePlayer() {
       newSearchParams.set("mediaIndex", index.toString())
       router.push(`?${newSearchParams.toString()}`)
     },
-    [context.playerRef, router, searchParams]
+    [playerRef, router, searchParams]
   )
 
   const playPrev = useCallback(
@@ -88,7 +90,7 @@ export function usePlayer() {
         const storedPlaylistsString =
           localStorage.getItem("ambient.playlists") ?? "[]"
         const storedPlaylists = JSON.parse(storedPlaylistsString) as string[]
-        localStorage.setItem(
+        setStorageItem(
           "ambient.playlists",
           JSON.stringify([...new Set([...storedPlaylists, name]).values()])
         )
@@ -115,8 +117,8 @@ export function usePlayer() {
   )
 
   const setFullscreen = useCallback(() => {
-    context.playerRef?.current?.getInternalPlayer().g.requestFullscreen()
-  }, [context.playerRef])
+    playerRef?.current?.getInternalPlayer().g.requestFullscreen()
+  }, [playerRef])
 
   return {
     ...context,

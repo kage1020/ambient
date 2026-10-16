@@ -4,7 +4,7 @@ import { usePlayer } from "@/hooks/use-player"
 import { useTranslation } from "@/hooks/use-translation"
 import { theme } from "@/libs/tw"
 import { Button, Label, Select, TextInput } from "flowbite-react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { HiTrash as TrashIcon } from "react-icons/hi"
 
 type PlaylistSelectProps = {
@@ -17,7 +17,11 @@ export function PlaylistSelect({
   playlistNames,
 }: PlaylistSelectProps) {
   const { remotePlaylists, selectPlaylist, setRemotePlaylists } = usePlayer()
-  const [url, setUrl] = useState("")
+  const [url, setUrl] = useState(
+    selectedPlaylistName?.startsWith("http") ? selectedPlaylistName : ""
+  )
+  const [prevSelectedPlaylistName, setPrevSelectedPlaylistName] =
+    useState(selectedPlaylistName)
   const t = useTranslation()
 
   const deleteRemotePlaylist = (playlist: string) => {
@@ -31,11 +35,12 @@ export function PlaylistSelect({
     selectPlaylist(url)
   }
 
-  useEffect(() => {
+  if (selectedPlaylistName !== prevSelectedPlaylistName) {
+    setPrevSelectedPlaylistName(selectedPlaylistName)
     if (selectedPlaylistName?.startsWith("http")) {
       setUrl(selectedPlaylistName)
     }
-  }, [selectedPlaylistName])
+  }
 
   return (
     <div className="p-4 space-y-2">
