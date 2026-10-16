@@ -8,9 +8,8 @@ const defaultAvailableLocales = ["en", "ja"]
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|opengraph-image|manifest.webmanifest|icon.svg|sw.js).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|[a-z]{2}/opengraph-image|manifest.webmanifest|icon.svg|sw.js).*)",
   ],
-  // runtime: 'nodejs',
 }
 
 async function detectLocale(acceptLanguage: string, pathname: string) {
@@ -26,7 +25,7 @@ async function detectLocale(acceptLanguage: string, pathname: string) {
   )
 }
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname, searchParams } = request.nextUrl
 
   const parsedSearchParams = searchParamsSchema.parse(
