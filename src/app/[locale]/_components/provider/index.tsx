@@ -4,6 +4,7 @@ import type { Translation } from "@/libs/i18n"
 import { ThemeProvider } from "@/libs/next-themes"
 import type { ParsedPageParams } from "@/libs/params"
 import type { PlaylistOption } from "@/libs/playlist"
+import { Toaster } from "sonner"
 import { ContextProvider } from "./context-provider"
 
 type ProviderProps = {
@@ -26,6 +27,11 @@ export function Provider({
         playlistOption={playlistOption}
         pageParams={pageParams}
       >
+        <Toaster
+          className="w-full"
+          position="top-center"
+          toastOptions={{ unstyled: true }}
+        />
         {children}
       </ContextProvider>
     </ThemeProvider>
