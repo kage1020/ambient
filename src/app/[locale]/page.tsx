@@ -1,5 +1,7 @@
 import { defaultPlaylistOption } from "@/libs/const"
+import { formatDocumentTitle } from "@/libs/format"
 import { getTranslation } from "@/libs/i18n"
+import { getMedia } from "@/libs/media"
 import { getPageParams, type PageParams, parsePageParams } from "@/libs/params"
 import { getMediaList, getPlaylist } from "@/libs/playlist"
 import { Metadata, Viewport } from "next"
@@ -24,11 +26,10 @@ export async function generateMetadata(): Promise<Metadata> {
         searchParams.seed
       )
     : []
-  const media =
-    searchParams.mediaIndex !== null ? mediaList[searchParams.mediaIndex] : null
-  const title = `${media?.title ? `${media.title} - ` : ""}${
+  const title = formatDocumentTitle(
+    getMedia(mediaList, searchParams.mediaIndex),
     t["Ambient Media Player"]
-  }`
+  )
 
   return {
     metadataBase: new URL(
@@ -58,7 +59,7 @@ export const viewport: Viewport = {
 }
 
 export default async function Home({ params, searchParams }: PageParams) {
-  const { parsedParams, parsedSearchParams } = await parsePageParams({
+  const { parsedSearchParams } = await parsePageParams({
     params,
     searchParams,
   })
@@ -76,11 +77,14 @@ export default async function Home({ params, searchParams }: PageParams) {
 
   return (
     <Provider
-      pageParams={{ parsedParams, parsedSearchParams }}
       playlistOption={playlist?.options ?? defaultPlaylistOption}
+      mediaList={mediaList}
     >
-      <Player playlist={playlist} mediaList={mediaList} />
-      <Menu playlist={playlist} mediaList={mediaList} />
+      <Player
+        background={playlist?.options.background}
+        captionFormat={playlist?.options.caption}
+      />
+      <Menu playlist={playlist} />
       <PlaylistDrawer mediaList={mediaList} />
       <SettingsDrawer />
       <OptionModal />

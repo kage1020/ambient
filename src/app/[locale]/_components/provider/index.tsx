@@ -1,27 +1,26 @@
 "use client"
 
 import { ThemeProvider } from "@/libs/next-themes"
-import type { ParsedPageParams } from "@/libs/params"
-import type { PlaylistOption } from "@/libs/playlist"
+import type { Media, PlaylistOption } from "@/libs/playlist"
 import { Toaster } from "sonner"
 import { ContextProvider } from "./context-provider"
 
 type ProviderProps = {
   playlistOption: PlaylistOption
-  pageParams: ParsedPageParams
+  mediaList: Media[]
   children: React.ReactNode
 }
 
 export function Provider({
   playlistOption,
-  pageParams,
+  mediaList,
   children,
 }: ProviderProps) {
   return (
     <ThemeProvider enableSystem attribute="class" storageKey="ambient.theme">
       <ContextProvider
         playlistOption={playlistOption}
-        pageParams={pageParams}
+        mediaList={mediaList}
       >
         <Toaster
           className="w-full"

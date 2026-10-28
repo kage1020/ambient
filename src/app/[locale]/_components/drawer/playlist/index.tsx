@@ -1,11 +1,6 @@
-import { getYoutubeThumbnailURL } from "@/libs/format"
 import { getTranslation } from "@/libs/i18n"
-import { getPageParams } from "@/libs/params"
 import type { Media } from "@/libs/playlist"
-import { cn } from "@/libs/tw"
-import Image from "next/image"
 import { PlaylistDrawer as Drawer, DrawerHeader } from ".."
-import noMedia from "../../../../../assets/images/no-media-placeholder.svg"
 import { Close as CloseIcon, Playlist as PlaylistIcon } from "../../icons"
 import { MediaItem } from "./media-item"
 
@@ -15,7 +10,6 @@ type PlaylistDrawerProps = {
 
 export async function PlaylistDrawer({ mediaList }: PlaylistDrawerProps) {
   const t = await getTranslation()
-  const { searchParams } = await getPageParams()
 
   return (
     <Drawer className="border-r border-gray-200 dark:border-gray-600 shadow dark:shadow-md p-0">
@@ -45,52 +39,7 @@ export async function PlaylistDrawer({ mediaList }: PlaylistDrawerProps) {
           </div>
         )}
         {mediaList.map((item, index) => (
-          <MediaItem
-            key={item.mediaId}
-            index={index}
-            mediaIndex={searchParams.mediaIndex}
-          >
-            <div className="w-8 h-8">
-              {item.image && (
-                <Image
-                  src={`/images/${item.image}`}
-                  alt=""
-                  className="block rounded object-cover"
-                  width={32}
-                  height={32}
-                  unoptimized
-                />
-              )}
-              {item.videoid && (
-                <Image
-                  src={getYoutubeThumbnailURL(item.videoid) || noMedia}
-                  alt=""
-                  className="block rounded object-cover"
-                  width={32}
-                  height={32}
-                  unoptimized
-                />
-              )}
-            </div>
-            <div className="flex-1 flex flex-col pointer-events-none text-left overflow-hidden">
-              <span
-                className={cn(
-                  "text-sm text-gray-900 rotate-0.03 hover:text-white dark:text-gray-100 overflow-ellipsis whitespace-nowrap overflow-hidden",
-                  index === searchParams.mediaIndex && "text-white"
-                )}
-              >
-                {item.title}
-              </span>
-              <span
-                className={cn(
-                  "text-xs text-amber-900 rotate-0.03 hover:text-amber-50 dark:text-amber-500 overflow-ellipsis whitespace-nowrap overflow-hidden",
-                  index === searchParams.mediaIndex && "text-amber-200"
-                )}
-              >
-                {item.artist}
-              </span>
-            </div>
-          </MediaItem>
+          <MediaItem key={item.mediaId} index={index} media={item} />
         ))}
       </div>
     </Drawer>

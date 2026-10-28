@@ -124,8 +124,3 @@ export async function shuffleMedia(mediaItems: Media[], seed?: number) {
     .sort((a, b) => a.r - b.r)
     .map((m) => ({ ...m, r: undefined })) as Media[]
 }
-
-export async function getMedia(mediaList: Media[], mediaIndex: number | null) {
-  if (mediaIndex === null) return null
-  return mediaList.at(mediaIndex) || null
-}

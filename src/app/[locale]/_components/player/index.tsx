@@ -1,9 +1,11 @@
-import { filterText, getYoutubeURL } from "@/libs/format"
-import { getTranslation } from "@/libs/i18n"
-import { getPageParams } from "@/libs/params"
-import { getMedia, type Media, type Playlist } from "@/libs/playlist"
+"use client"
+
+import { useCurrentMedia } from "@/hooks/use-current-media"
+import { useTranslation } from "@/hooks/use-translation"
+import { filterText, formatDocumentTitle, getYoutubeURL } from "@/libs/format"
 import { cn } from "@/libs/tw"
 import Link from "next/link"
+import { useEffect } from "react"
 import { ExternalLink as ExternalLinkIcon } from "../icons"
 import { actionButtonClassName } from "./action-button"
 import { CarouselShowButton } from "./carousel-show"
@@ -13,30 +15,31 @@ import { VideoFullscreenButton } from "./video-fullscreen"
 import { VideoPlayer } from "./video-player"
 
 type PlayerProps = {
-  playlist: Playlist | null
-  mediaList: Media[]
+  background?: string
+  captionFormat?: string
 }
 
-export async function Player({ playlist, mediaList }: PlayerProps) {
-  const pageParams = await getPageParams()
-  const t = await getTranslation(pageParams.params.locale)
-  const media = await getMedia(mediaList, pageParams.searchParams.mediaIndex)
+export function Player({ background, captionFormat }: PlayerProps) {
+  const t = useTranslation()
+  const { mediaList, media } = useCurrentMedia()
   const url = media?.videoid ? getYoutubeURL(media.videoid) : "#"
-  const caption =
-    media && playlist?.options.caption
-      ? filterText(media, playlist.options.caption)
-      : ""
+  const caption = media && captionFormat ? filterText(media, captionFormat) : ""
+  const title = formatDocumentTitle(media, t["Ambient Media Player"])
+
+  useEffect(() => {
+    // Switching media skips the server render that would update the metadata
+    document.title = title
+  }, [title])
 
   return (
     <div
       data-testid="viewer"
       className={cn(
         "flex flex-col items-center max-w-full w-full h-full mt-0 mx-auto pb-[calc(6rem+env(safe-area-inset-bottom))] z-10 overflow-y-auto overflow-x-hidden",
-        playlist?.options.background && "bg-no-repeat bg-bottom bg-cover"
+        background && "bg-no-repeat bg-bottom bg-cover"
       )}
       style={{
-        backgroundImage:
-          playlist?.options.background && `url(${playlist.options.background})`,
+        backgroundImage: background && `url(${background})`,
       }}
     >
       <div className="relative w-full mt-4 flex justify-center">

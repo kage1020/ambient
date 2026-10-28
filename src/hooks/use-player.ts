@@ -50,9 +50,10 @@ export function usePlayer() {
 
       const newSearchParams = new URLSearchParams(searchParams.toString())
       newSearchParams.set("mediaIndex", index.toString())
-      router.push(`?${newSearchParams.toString()}`)
+      // The media list is already on the client, so skip the server render
+      window.history.pushState(null, "", `?${newSearchParams.toString()}`)
     },
-    [playerRef, router, searchParams]
+    [playerRef, searchParams]
   )
 
   const playPrev = useCallback(

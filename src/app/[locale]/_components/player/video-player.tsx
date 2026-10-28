@@ -1,9 +1,9 @@
 "use client"
 
 import { useCarousel } from "@/hooks/use-carousel"
+import { useCurrentMedia } from "@/hooks/use-current-media"
 import { useDrawer } from "@/hooks/use-drawer"
 import { useHydrated } from "@/hooks/use-hydrated"
-import { usePageParams } from "@/hooks/use-page-params"
 import { usePlayer } from "@/hooks/use-player"
 import { useTranslation } from "@/hooks/use-translation"
 import { cn } from "@/libs/tw"
@@ -24,7 +24,7 @@ export function VideoPlayer({ url, mediaCount, caption }: VideoPlayerProps) {
   const { carouselOpen } = useCarousel()
   const hydrated = useHydrated()
   const t = useTranslation()
-  const { parsedSearchParams } = usePageParams()
+  const { mediaIndex } = useCurrentMedia()
 
   const onReady = () => {
     if (options.autoplay && !playing) {
@@ -41,10 +41,10 @@ export function VideoPlayer({ url, mediaCount, caption }: VideoPlayerProps) {
   }
 
   const onEnded = () => {
-    if (parsedSearchParams.mediaIndex === null) return
+    if (mediaIndex === null) return
 
-    if (options.loop) playAt(parsedSearchParams.mediaIndex)
-    else playNext(parsedSearchParams.mediaIndex, mediaCount)
+    if (options.loop) playAt(mediaIndex)
+    else playNext(mediaIndex, mediaCount)
   }
 
   const onError = () => {

@@ -1,5 +1,4 @@
-import { getPageParams } from "@/libs/params"
-import { getMedia, type Media, Playlist } from "@/libs/playlist"
+import type { Playlist } from "@/libs/playlist"
 import { cn } from "@/libs/tw"
 import { OptionsButton } from "./options-button"
 import { PauseButton } from "./pause-button"
@@ -10,13 +9,9 @@ import { SettingButton } from "./setting-button"
 
 type MenuProps = {
   playlist: Playlist | null
-  mediaList: Media[]
 }
 
-export async function Menu({ playlist, mediaList }: MenuProps) {
-  const { searchParams } = await getPageParams()
-  const media = await getMedia(mediaList, searchParams.mediaIndex)
-
+export function Menu({ playlist }: MenuProps) {
   return (
     <div
       data-testid="bottom-menu"
@@ -35,7 +30,7 @@ export async function Menu({ playlist, mediaList }: MenuProps) {
         <PlaylistButton />
         <RefreshButton />
         <div className="flex items-center justify-center">
-          <PlayButton disabled={!media} />
+          <PlayButton />
           <PauseButton />
         </div>
         <SettingButton />

@@ -1,15 +1,14 @@
 "use client"
 
 import { CarouselContext } from "@/hooks/use-carousel"
+import { MediaListContext } from "@/hooks/use-current-media"
 import { DrawerContext } from "@/hooks/use-drawer"
 import { ModalContext } from "@/hooks/use-modal"
-import { PageParamsContext } from "@/hooks/use-page-params"
 import { PlayerContext } from "@/hooks/use-player"
 import { setStorageItem, useStorageItem } from "@/hooks/use-storage-item"
 import { defaultPlaylistOption } from "@/libs/const"
 import { useTheme } from "@/libs/next-themes"
-import type { ParsedPageParams } from "@/libs/params"
-import type { PlaylistOption } from "@/libs/playlist"
+import type { Media, PlaylistOption } from "@/libs/playlist"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type ReactPlayer from "react-player"
@@ -29,13 +28,13 @@ function mergeStoredOptions(
 
 type ProviderProps = {
   playlistOption: PlaylistOption
-  pageParams: ParsedPageParams
+  mediaList: Media[]
   children: React.ReactNode
 }
 
 export function ContextProvider({
   playlistOption,
-  pageParams,
+  mediaList,
   children,
 }: ProviderProps) {
   const playerRef = useRef<ReactPlayer>(null)
@@ -117,7 +116,7 @@ export function ContextProvider({
   }, [playlistOption, router, searchParams, setTheme])
 
   return (
-    <PageParamsContext value={pageParams}>
+    <MediaListContext value={mediaList}>
       <PlayerContext
         value={{
           playerRef,
@@ -146,6 +145,6 @@ export function ContextProvider({
           </ModalContext>
         </DrawerContext>
       </PlayerContext>
-    </PageParamsContext>
+    </MediaListContext>
   )
 }
