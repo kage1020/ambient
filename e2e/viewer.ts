@@ -11,7 +11,7 @@ export function label(locale: Locale, key: keyof typeof en) {
   return translations[locale][key]
 }
 
-export async function openViewer(
+export async function gotoViewer(
   page: Page,
   locale: Locale,
   playlist = "mili.json"
@@ -27,6 +27,14 @@ export async function openViewer(
     shuffle: "false",
   })
   await page.goto(`/${locale}?${searchParams}`)
+}
+
+export async function openViewer(
+  page: Page,
+  locale: Locale,
+  playlist = "mili.json"
+) {
+  await gotoViewer(page, locale, playlist)
   await expect(video(page)).toBeAttached()
   // The player stops changing its playing state once it reports the load error
   await expect(errorNotice(page, locale)).toBeVisible()

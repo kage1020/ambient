@@ -1,6 +1,13 @@
 import { expect, type Page, test } from "@playwright/test"
 import { type PlaylistHost, startPlaylistHost } from "./playlist-host"
-import { label, type Locale, locales, openViewer, viewer } from "./viewer"
+import {
+  gotoViewer,
+  label,
+  type Locale,
+  locales,
+  openViewer,
+  viewer,
+} from "./viewer"
 
 // Vercel stops a function after 10 seconds, which leaves the page broken
 const serverlessTimeLimit = 10_000
@@ -69,6 +76,32 @@ for (const locale of locales) {
       await expect(viewer(page)).toBeVisible()
       await expect(retryButton(page, locale)).toBeHidden()
       expect(await page.evaluate(() => "notReloaded" in window)).toBe(true)
+    })
+  })
+
+  test.describe(`remote playlist unavailable on first load (${locale})`, () => {
+    let host: PlaylistHost
+
+    test.beforeEach(async () => {
+      host = await startPlaylistHost()
+      host.behave("fail")
+    })
+
+    test.afterEach(async () => {
+      await host.close()
+    })
+
+    test("retry restores the player once the playlist host recovers", async ({
+      page,
+    }) => {
+      await gotoViewer(page, locale, host.url)
+      await expect(retryButton(page, locale)).toBeVisible()
+
+      host.behave("respond")
+      await retryButton(page, locale).click()
+
+      await expect(viewer(page)).toBeVisible()
+      await expect(retryButton(page, locale)).toBeHidden()
     })
   })
 }
