@@ -17,6 +17,8 @@
     "Close Playlist": "プレイリストを閉じる",
     "No media available.": "有効なメディアがありません",
     "Failed to load the video.": "ビデオの読み込みに失敗しました",
+    "Failed to load the page.": "ページの読み込みに失敗しました",
+    "Retry": "再試行",
     "Close Settings": "設定を閉じる",
     "Current Playlist": "現在のプレイリスト",
     "Choose a playlist": "プレイリストを選んでください",

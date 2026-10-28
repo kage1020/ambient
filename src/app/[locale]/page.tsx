@@ -62,8 +62,6 @@ export default async function Home({ params, searchParams }: PageParams) {
     params,
     searchParams,
   })
-  const t = await getTranslation(parsedParams.locale)
-
   const playlist = parsedSearchParams.playlist
     ? await getPlaylist(parsedSearchParams.playlist)
     : null
@@ -78,7 +76,6 @@ export default async function Home({ params, searchParams }: PageParams) {
 
   return (
     <Provider
-      t={t}
       pageParams={{ parsedParams, parsedSearchParams }}
       playlistOption={playlist?.options ?? defaultPlaylistOption}
     >

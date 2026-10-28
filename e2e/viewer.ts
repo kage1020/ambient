@@ -11,14 +11,22 @@ export function label(locale: Locale, key: keyof typeof en) {
   return translations[locale][key]
 }
 
-export async function openViewer(page: Page, locale: Locale) {
+export async function openViewer(
+  page: Page,
+  locale: Locale,
+  playlist = "mili.json"
+) {
   // Keep layout checks independent of YouTube availability
   await page.route(/youtube\.com|ytimg\.com|googlevideo\.com/, (route) =>
     route.abort()
   )
-  await page.goto(
-    `/${locale}?playlist=mili.json&mediaIndex=0&seed=1&shuffle=false`
-  )
+  const searchParams = new URLSearchParams({
+    playlist,
+    mediaIndex: "0",
+    seed: "1",
+    shuffle: "false",
+  })
+  await page.goto(`/${locale}?${searchParams}`)
   await expect(video(page)).toBeAttached()
   // The player stops changing its playing state once it reports the load error
   await expect(errorNotice(page, locale)).toBeVisible()

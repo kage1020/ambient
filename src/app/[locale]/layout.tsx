@@ -1,6 +1,7 @@
-import { parsePageParams } from "@/libs/params"
+import { getTranslation } from "@/libs/i18n"
+import { type PageParams, parsePageParams } from "@/libs/params"
 import localFont from "next/font/local"
-import { headers } from "next/headers"
+import { TranslationProvider } from "./_components/provider/translation-provider"
 import "./globals.css"
 
 const mplus = localFont({
@@ -11,14 +12,13 @@ const mplus = localFont({
 
 type AppLayoutProps = {
   children: React.ReactNode
+  params: PageParams["params"]
 }
 
-export default async function AppLayout({ children }: AppLayoutProps) {
-  const headerList = await headers()
-  const searchParams = new URLSearchParams(
-    headerList.get("X-Search-Params") ?? ""
-  )
-  const { parsedParams } = await parsePageParams({ searchParams })
+export default async function AppLayout({ children, params }: AppLayoutProps) {
+  const { parsedParams } = await parsePageParams({ params })
+  // Provided here so the error boundary below the layout can translate too
+  const t = await getTranslation(parsedParams.locale)
 
   return (
     <html
@@ -34,7 +34,7 @@ export default async function AppLayout({ children }: AppLayoutProps) {
         />
       </head>
       <body className="antialiased w-screen h-dvh pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] bg-white dark:bg-gray-800 overflow-hidden transition-all">
-        {children}
+        <TranslationProvider t={t}>{children}</TranslationProvider>
       </body>
     </html>
   )
