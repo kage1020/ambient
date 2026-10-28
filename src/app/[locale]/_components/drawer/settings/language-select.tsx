@@ -1,9 +1,8 @@
 "use client"
 
-import { usePageParams } from "@/hooks/use-page-params"
 import { useTranslation } from "@/hooks/use-translation"
 import { Label } from "flowbite-react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { useParams, useRouter, useSearchParams } from "next/navigation"
 
 type LanguageSelectProps = {
   languages: {
@@ -16,7 +15,7 @@ export function LanguageSelect({ languages }: LanguageSelectProps) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const t = useTranslation()
-  const { parsedParams } = usePageParams()
+  const { locale } = useParams<{ locale: string }>()
 
   const changeLocale = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const params = searchParams ?? new URLSearchParams()
@@ -35,7 +34,7 @@ export function LanguageSelect({ languages }: LanguageSelectProps) {
         id="language"
         className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         disabled={languages.length === 1}
-        value={parsedParams.locale}
+        value={locale}
         onChange={changeLocale}
       >
         {languages.map((lang, index) => (

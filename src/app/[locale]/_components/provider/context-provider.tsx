@@ -1,17 +1,14 @@
 "use client"
 
 import { CarouselContext } from "@/hooks/use-carousel"
+import { MediaListContext } from "@/hooks/use-current-media"
 import { DrawerContext } from "@/hooks/use-drawer"
 import { ModalContext } from "@/hooks/use-modal"
-import { PageParamsContext } from "@/hooks/use-page-params"
 import { PlayerContext } from "@/hooks/use-player"
 import { setStorageItem, useStorageItem } from "@/hooks/use-storage-item"
-import { TranslationContext } from "@/hooks/use-translation"
 import { defaultPlaylistOption } from "@/libs/const"
-import type { Translation } from "@/libs/i18n"
 import { useTheme } from "@/libs/next-themes"
-import type { ParsedPageParams } from "@/libs/params"
-import type { PlaylistOption } from "@/libs/playlist"
+import type { Media, PlaylistOption } from "@/libs/playlist"
 import { useRouter, useSearchParams } from "next/navigation"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import type ReactPlayer from "react-player"
@@ -30,16 +27,14 @@ function mergeStoredOptions(
 }
 
 type ProviderProps = {
-  t: Translation
   playlistOption: PlaylistOption
-  pageParams: ParsedPageParams
+  mediaList: Media[]
   children: React.ReactNode
 }
 
 export function ContextProvider({
-  t,
   playlistOption,
-  pageParams,
+  mediaList,
   children,
 }: ProviderProps) {
   const playerRef = useRef<ReactPlayer>(null)
@@ -121,37 +116,35 @@ export function ContextProvider({
   }, [playlistOption, router, searchParams, setTheme])
 
   return (
-    <TranslationContext value={t}>
-      <PageParamsContext value={pageParams}>
-        <PlayerContext
+    <MediaListContext value={mediaList}>
+      <PlayerContext
+        value={{
+          playerRef,
+          options,
+          playing,
+          remotePlaylists,
+          display,
+          setOptions,
+          setPlaying,
+          setRemotePlaylists,
+          setDisplay,
+        }}
+      >
+        <DrawerContext
           value={{
-            playerRef,
-            options,
-            playing,
-            remotePlaylists,
-            display,
-            setOptions,
-            setPlaying,
-            setRemotePlaylists,
-            setDisplay,
+            playlistOpen,
+            setPlaylistOpen,
+            settingsOpen,
+            setSettingsOpen,
           }}
         >
-          <DrawerContext
-            value={{
-              playlistOpen,
-              setPlaylistOpen,
-              settingsOpen,
-              setSettingsOpen,
-            }}
-          >
-            <ModalContext value={{ modalOpen, setModalOpen }}>
-              <CarouselContext value={{ carouselOpen, setCarouselOpen }}>
-                {children}
-              </CarouselContext>
-            </ModalContext>
-          </DrawerContext>
-        </PlayerContext>
-      </PageParamsContext>
-    </TranslationContext>
+          <ModalContext value={{ modalOpen, setModalOpen }}>
+            <CarouselContext value={{ carouselOpen, setCarouselOpen }}>
+              {children}
+            </CarouselContext>
+          </ModalContext>
+        </DrawerContext>
+      </PlayerContext>
+    </MediaListContext>
   )
 }

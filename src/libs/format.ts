@@ -8,6 +8,10 @@ export function getYoutubeThumbnailURL(videoId: string) {
   return `https://img.youtube.com/vi/${videoId}/hqdefault.jpg`
 }
 
+export function formatDocumentTitle(media: Media | null, appName: string) {
+  return media?.title ? `${media.title} - ${appName}` : appName
+}
+
 export function filterText(media: Media, format: string) {
   const patterns = format.match(/%(.+?)%/gi)
   if (!patterns) return media.title

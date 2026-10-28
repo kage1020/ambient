@@ -1,17 +1,15 @@
 "use client"
 
+import { useCurrentMedia } from "@/hooks/use-current-media"
 import { usePlayer } from "@/hooks/use-player"
 import { useTranslation } from "@/hooks/use-translation"
 import { cn } from "@/libs/tw"
 import { Tooltip } from "flowbite-react"
 import { Play as PlayIcon } from "../icons"
 
-type PlayButtonProps = {
-  disabled: boolean
-}
-
-export function PlayButton({ disabled }: PlayButtonProps) {
+export function PlayButton() {
   const { playing, setPlaying } = usePlayer()
+  const { media } = useCurrentMedia()
   const t = useTranslation()
 
   return (
@@ -22,7 +20,7 @@ export function PlayButton({ disabled }: PlayButtonProps) {
           playing && "hidden"
         )}
         onClick={() => setPlaying(true)}
-        disabled={playing || disabled}
+        disabled={playing || !media}
       >
         <PlayIcon className="w-4 h-4 text-white" />
         <span className="sr-only">{t["Play"]}</span>

@@ -1,3 +1,4 @@
+import { parseMediaIndex } from "@/libs/media"
 import { headers } from "next/headers"
 import { z } from "zod"
 // import { defaultLocale } from '@/libs/i18n';
@@ -17,10 +18,7 @@ export const searchParamsSchema = z
       .string()
       .nullable()
       .default(null)
-      .transform((val) => {
-        const parsed = Number.parseInt(val ?? "")
-        return Number.isNaN(parsed) ? null : parsed
-      }),
+      .transform(parseMediaIndex),
     seed: z.string().transform((val) => {
       const parsed = Number.parseInt(val)
       return Number.isNaN(parsed) ? new Date().getTime() : parsed

@@ -1,6 +1,10 @@
 import { isLocal } from "@/libs/const"
+import { cache } from "react"
 import "server-only"
 import { Random } from "./random"
+
+// Leaves room for rendering within the serverless function's 10-second limit
+const remotePlaylistTimeout = 5_000
 
 export type Media = {
   mediaId: string
@@ -56,10 +60,16 @@ export async function getPlaylistFileNames(url?: string) {
   )
 }
 
-export async function getPlaylist(nameOrUrl: string) {
+// A fetch with an abort signal is not deduplicated, so one render shares the result here
+export const getPlaylist = cache(async (nameOrUrl: string) => {
   if (nameOrUrl.startsWith("http")) {
-    const res = await fetch(nameOrUrl)
-    return res.json() as Promise<Playlist>
+    const res = await fetch(nameOrUrl, {
+      signal: AbortSignal.timeout(remotePlaylistTimeout),
+    })
+    if (!res.ok) {
+      throw new Error(`Failed to fetch playlist ${nameOrUrl}: ${res.status}`)
+    }
+    return (await res.json()) as Playlist
   }
 
   const fs = await import("node:fs/promises")
@@ -68,7 +78,7 @@ export async function getPlaylist(nameOrUrl: string) {
     "utf-8"
   )
   return JSON.parse(content) as Playlist
-}
+})
 
 export async function getCategories(playlist: Playlist) {
   return ["all", ...Object.keys(playlist).filter((key) => key !== "options")]
@@ -113,9 +123,4 @@ export async function shuffleMedia(mediaItems: Media[], seed?: number) {
     .map((m) => ({ ...m, r: random.next() }))
     .sort((a, b) => a.r - b.r)
     .map((m) => ({ ...m, r: undefined })) as Media[]
-}
-
-export async function getMedia(mediaList: Media[], mediaIndex: number | null) {
-  if (mediaIndex === null) return null
-  return mediaList.at(mediaIndex) || null
 }
